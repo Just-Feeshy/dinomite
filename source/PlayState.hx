@@ -1,11 +1,10 @@
 package;
 
 import flixel.text.FlxText;
-import flixel.FlxState;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 
-class PlayState extends FlxState {
+class PlayState extends BetterUIStates {
 	override public function create():Void {
 		super.create();
 		add(new FlxText("Hello World", 32).screenCenter());
