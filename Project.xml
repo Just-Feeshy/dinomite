@@ -27,9 +27,12 @@
 
 	<!-- _____________________________ Path Settings ____________________________ -->
 
-	<set name="BUILD_DIR" value="export" />
 	<source path="source" />
 	<assets path="assets" />
+
+	<set name="BUILD_DIR" value="export/debug" if="debug" />
+	<set name="BUILD_DIR" value="export/release" if="release" />
+	<set name="BUILD_DIR" value="export/32bit" if="32" />
 
 	<!-- _______________________________ Libraries ______________________________ -->
 
@@ -40,6 +43,7 @@
 
 	<!--In case you want to use the ui package-->
 	<haxelib name="flixel-ui" />
+	<haxelib name="faxe" if='switch'/>
 
 	<!--In case you want to use nape with flixel-->
 	<!--<haxelib name="nape-haxe4" />-->
@@ -70,8 +74,14 @@
 	<!--Disable the Flixel core focus lost screen-->
 	<!--<haxedef name="FLX_NO_FOCUS_LOST_SCREEN" />-->
 
+	<!--Debugger for crash log-->
+	<section if="cpp">
+		<haxedef name="HXCPP_CHECK_POINTER" if="release"/>
+		<haxedef name="HXCPP_STACK_LINE" if="release"/>
+	</section>
+
 	<!--Disable the Flixel core debugger. Automatically gets set whenever you compile in release mode!-->
-	<haxedef name="FLX_NO_DEBUG" unless="debug" />
+	<haxedef name="FLX_NO_DEBUG" />
 
 	<!--Enable this for Nape release builds for a serious peformance improvement-->
 	<haxedef name="NAPE_RELEASE_BUILD" unless="debug" />
