@@ -16,7 +16,7 @@ class Main extends Sprite
 	#if debug
 	var fullscreen:Bool = false;
 	#else
-	var fullscreen:Bool = true;
+	var fullscreen:Bool = false;
 	#end
 
 	public static function main():Void {
@@ -42,7 +42,7 @@ class Main extends Sprite
 	}
 
 	private function setupGame():Void {
-		game = new FeshGame(0, 0, PlayState, zoom, fps, fps, true, fullscreen);
+		game = new FeshGame(0, 0, TitleState, zoom, fps, fps, true, fullscreen);
 		addChild(game);
 	}
 }
