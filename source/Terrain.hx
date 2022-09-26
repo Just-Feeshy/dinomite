@@ -9,6 +9,8 @@ import flixel.group.FlxSpriteGroup;
 class Terrain extends FlxSpriteGroup {
     @:final public var maxiumHeight:Float = Std.int(FlxG.height * 0.5) + 64;
 
+    public var collisionMembers(default, null):Array<FlxSprite> = [];
+
     public var firstGenHeight(default, null):UInt = 0;
     public var genHeight(default, null):UInt = 0;
 
@@ -18,6 +20,8 @@ class Terrain extends FlxSpriteGroup {
 
     var genLayersIndex:UInt = 0;
     var genLayersMax:UInt = 0;
+
+    var genSide:Bool = false;
 
     @:final public var startingVelocity:Float = 200;
     @:final public var startingAcceleration:Float = 20;
@@ -41,6 +45,7 @@ class Terrain extends FlxSpriteGroup {
             genLayersMax = FlxG.random.int(3, 7);
             genDistance = FlxG.random.int(2, 8);
             genLayersIndex = 0;
+            genSide = false;
             return;
         }
 
@@ -51,21 +56,31 @@ class Terrain extends FlxSpriteGroup {
 
         var index:UInt = 1;
 
+        var grass:FlxSprite = new FlxSprite(x, maxiumHeight - (genHeight * 64) - 64).loadGraphic(AssetPath.image("assets/images/grass"));
+        grass.setGraphicSize(64, 64);
+        grass.updateHitbox();
+        add(grass);
+
         var floor:FlxSprite = new FlxSprite(x, maxiumHeight - (genHeight * 64)).loadGraphic(AssetPath.image("assets/images/ground1"));
         floor.setGraphicSize(64, 64);
         floor.updateHitbox();
-        add(floor);
+        addBlock(floor);
 
         while(index < genHeight) {
             var ground:FlxSprite = new FlxSprite(x, ((index) * 64) + maxiumHeight - (genHeight * 64)).loadGraphic(AssetPath.image("assets/images/ground2"));
 		    ground.setGraphicSize(64, 64);
 		    ground.updateHitbox();
-		    add(ground);
+		    addBlock(ground);
 
             index++;
         }
 
         genLayersIndex++;
+    }
+
+    public function addBlock(sprite:FlxSprite):Void {
+        collisionMembers.push(sprite);
+        add(sprite);
     }
 
     function genMap():Void {
@@ -89,6 +104,10 @@ class Terrain extends FlxSpriteGroup {
         return collisionWall = value;
     }
 
+    function deleteSide():Void {
+        member.sort();
+    }
+
     override public function update(elapsed:Float):Void {
         super.update(elapsed);
 
@@ -96,6 +115,17 @@ class Terrain extends FlxSpriteGroup {
             backwardsVelocity.x += elapsed * 10;
         }else {
             backwardsVelocity.x = 0;
+        }
+
+        if(width + x < FlxG.width) {
+            if(!genSide && width + x < FlxG.width + genDistance) {
+                genSide = true;
+            }
+            
+            if(genSide) {
+                generateSide(width + (genDistance * 64));
+                deleteSide();
+            }
         }
     }
 
