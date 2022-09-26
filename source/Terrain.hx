@@ -133,7 +133,7 @@ class Terrain extends FlxSpriteGroup {
         super.update(elapsed);
 
         if(!collisionWall) {
-            backwardsVelocity.x += elapsed * 10;
+            backwardsVelocity.x += elapsed * 25;
         }else {
             backwardsVelocity.x = 0;
         }
