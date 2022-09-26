@@ -142,7 +142,7 @@ class Terrain extends FlxSpriteGroup {
             if(!genSide && width + x < FlxG.width) {
                 genSide = true;
                 generateSide(blockDistance + (genDistance * 64));
-                blockDistance += 64 + (genDistance * 64);
+                blockDistance += (genDistance * 64);
             }
 
             if(genSide) {
