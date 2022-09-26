@@ -20,6 +20,8 @@ class PlayState extends BetterUIStates {
 	private var player:Player;
 	private var terrain:Terrain;
 
+	private var gravity:Float = 100000;
+
 	override public function create():Void {
 		camGame = new FeshCamera();
 
@@ -55,21 +57,27 @@ class PlayState extends BetterUIStates {
 	override public function update(elapsed:Float):Void {
 		camFollow.y = player.getMidpoint().y;
 		terrain.clearBlocksBeforeX(terrain.collisionMembers, player.x - 64);
-		player.gravity = topCollision(player);
+		player.gravity = topCollision(player, elapsed);
 
 		super.update(elapsed);
 	}
 
-	function topCollision(p:Player):Float {
-		var gravity:Float = 1000;
+	function topCollision(p:Player, elapsed:Float):Float {
+		if(gravity <= 0) {
+			gravity = 100000;
+		}
 
 		for(i in 0...terrain.collisionMembers.length) {
 			if(Math.floor(terrain.collisionMembers[i].x / 64) * 64 == Math.floor(p.x / 64) * 64 || Math.ceil(terrain.collisionMembers[i].x / 64) * 64 == Math.ceil(p.x / 64) * 64) {
-				if(p.y > terrain.collisionMembers[i].y - 64) {
-					//gravity = 0;
+				if(p.y < terrain.collisionMembers[i].y) {
+					gravity = 0;
 					break;
 				}
 			}
+		}
+
+		if(gravity > 0) {
+			gravity += elapsed * 5000 * 64;
 		}
 
 		return gravity;

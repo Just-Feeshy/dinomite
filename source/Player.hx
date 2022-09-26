@@ -12,8 +12,7 @@ class Player extends FeshSprite {
     }
 
     override function update(elapsed:Float):Void {
-        acceleration.y = gravity;
-        velocity.y += (jumpForce * elapsed) + ((gravity * Math.pow(elapsed, 2)) * 0.5);
+        y += (jumpForce * elapsed) + ((gravity * Math.pow(elapsed, 2)) * 0.5);
         jumpForce -= Math.min(jumpForce - (elapsed * 10), 0);
 
         super.update(elapsed);
