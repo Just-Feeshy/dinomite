@@ -28,6 +28,8 @@ class Terrain extends FlxSpriteGroup {
 
     public var backwardsVelocity(default, null):FlxPoint;
 
+    var blockDistance:Float = 0;
+
     public function new() {
         super();
 
@@ -43,14 +45,9 @@ class Terrain extends FlxSpriteGroup {
         if(genLayersIndex >= genLayersMax) {
             genHeight = Math.ceil((FlxG.height * 0.5) / 64) + FlxG.random.int(1, 10);
             genLayersMax = FlxG.random.int(3, 7);
-            genDistance = FlxG.random.int(2, 8);
+            genDistance = FlxG.random.int(0, 3) * 2;
             genLayersIndex = 0;
             genSide = false;
-            return;
-        }
-
-        if(genDistance > 0) {
-            genDistance--;
             return;
         }
 
@@ -89,8 +86,15 @@ class Terrain extends FlxSpriteGroup {
         genHeight = firstGenHeight;
 
         for(x in 0...Math.ceil(FlxG.width / 64)) {
+            if(genDistance > 0) {
+                genDistance--;
+                continue;
+            }
+
             generateSide(x * 64);
         }
+
+        blockDistance = width;
     }
 
     function set_collisionWall(value:Bool):Bool {
@@ -105,7 +109,24 @@ class Terrain extends FlxSpriteGroup {
     }
 
     function deleteSide():Void {
-        member.sort();
+        if(members.length == 0) {
+            return;
+        }
+
+        if(collisionMembers.length == 0) {
+            return;
+        }
+
+        collisionMembers.sort((a, b) -> Std.int(a.x - b.x));
+        members.sort((a, b) -> Std.int(a.x - b.x));
+
+        while(Std.int(collisionMembers[0].x) <= -(FlxG.width * 0.5) - 64) {
+            collisionMembers.shift();
+        }
+
+        while(Std.int(members[0].x) <= -(FlxG.width * 0.5) - 64) {
+            remove(members[0], true);
+        }
     }
 
     override public function update(elapsed:Float):Void {
@@ -117,14 +138,17 @@ class Terrain extends FlxSpriteGroup {
             backwardsVelocity.x = 0;
         }
 
-        if(width + x < FlxG.width) {
-            if(!genSide && width + x < FlxG.width + genDistance) {
+        if(blockDistance + x < FlxG.width) {
+            if(!genSide && width + x < FlxG.width) {
                 genSide = true;
+                generateSide(blockDistance + ((genDistance - 1) * 64));
+                blockDistance += 64 + ((genDistance - 1) * 64);
             }
-            
+
             if(genSide) {
-                generateSide(width + (genDistance * 64));
                 deleteSide();
+                generateSide(blockDistance);
+                blockDistance += 64;
             }
         }
     }
