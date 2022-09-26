@@ -45,7 +45,7 @@ class Terrain extends FlxSpriteGroup {
         if(genLayersIndex >= genLayersMax) {
             genHeight = Math.ceil((FlxG.height * 0.5) / 64) + FlxG.random.int(1, 10);
             genLayersMax = FlxG.random.int(3, 7);
-            genDistance = FlxG.random.int(0, 3) * 2;
+            genDistance = FlxG.random.int(1, 4) * 2;
             genLayersIndex = 0;
             genSide = false;
             return;
@@ -142,7 +142,7 @@ class Terrain extends FlxSpriteGroup {
             if(!genSide && width + x < FlxG.width) {
                 genSide = true;
                 generateSide(blockDistance + (genDistance * 64));
-                blockDistance += (genDistance * 64);
+                blockDistance += 64 + (genDistance * 64);
             }
 
             if(genSide) {
