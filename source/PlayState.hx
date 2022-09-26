@@ -26,7 +26,7 @@ class PlayState extends BetterUIStates {
 	private var addJumpForce:Bool = false;
 	private var doubleJump:Bool = true;
 
-	@:final private var playerCamOffset:Int = -128;
+	@:final private var playerCamOffset:Int = 128;
 
 	override public function create():Void {
 		camGame = new FeshCamera();
@@ -52,7 +52,7 @@ class PlayState extends BetterUIStates {
 		add(terrain);
 
 		camFollow = new FlxObject(0, 0, 1, 1);
-		camFollow.y = player.getMidpoint().y + playerCamOffset;
+		camFollow.x = playerCamOffset;
 		add(camFollow);
 
 		FlxG.camera.follow(camFollow, LOCKON, 0.04);
