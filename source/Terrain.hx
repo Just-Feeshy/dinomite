@@ -23,7 +23,7 @@ class Terrain extends FlxSpriteGroup {
 
     var genSide:Bool = false;
 
-    @:final public var startingVelocity:Float = 200;
+    @:final public var startingVelocity:Float = 500;
     @:final public var startingAcceleration:Float = 20;
 
     public var backwardsVelocity(default, null):FlxPoint;
@@ -44,7 +44,7 @@ class Terrain extends FlxSpriteGroup {
     public function generateSide(x:Float = 0):Void {
         if(genLayersIndex >= genLayersMax) {
             genHeight = Math.ceil((FlxG.height * 0.5) / 64) + FlxG.random.int(1, 10);
-            genLayersMax = FlxG.random.int(3, 7);
+            genLayersMax = FlxG.random.int(4, 8);
             genDistance = FlxG.random.int(1, 4) * 2;
             genLayersIndex = 0;
             genSide = false;

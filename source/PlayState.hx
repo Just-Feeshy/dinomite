@@ -24,6 +24,7 @@ class PlayState extends BetterUIStates {
 	private var jumpForce:Float = 0;
 
 	private var addJumpForce:Bool = false;
+	private var doubleJump:Bool = true;
 
 	override public function create():Void {
 		camGame = new FeshCamera();
@@ -62,13 +63,21 @@ class PlayState extends BetterUIStates {
 		terrain.clearBlocksBeforeX(terrain.collisionMembers, player.x - 64);
 		player.gravity = topCollision(player, elapsed);
 
-		if(controls.UP && (jumpForce > -2000 && player.isTouchingGround)) {
-			jumpForce -= 200;
+		if(controls.UP && (jumpForce > -3000 && (player.isTouchingGround || doubleJump))) {
+			if(!player.isTouchingGround) {
+				doubleJump = false;
+			}
+
+			jumpForce -= 1000;
 			addJumpForce = true;
 		}else if(addJumpForce) {
 			player.jumpForce = jumpForce;
 			addJumpForce = false;
 			jumpForce = 0;
+		}
+
+		if(player.isTouchingGround) {
+			doubleJump = false;
 		}
 
 		super.update(elapsed);
