@@ -80,6 +80,19 @@ class Terrain extends FlxSpriteGroup {
         add(sprite);
     }
 
+    public function clearBlocksBeforeX(blocks:Array<FlxSprite>, x:Float, destroy:Bool = false):Void {
+        blocks.sort((a, b) -> Std.int(a.x - b.x));
+
+        while(Std.int(blocks[0].x) <= x) {
+            if(destroy) {
+                blocks[0].destroy();
+                remove(blocks[0], true);
+            }else {
+                blocks.shift();
+            }
+        }
+    }
+
     function genMap():Void {
         genLayersMax = FlxG.random.int(3, 7);
         firstGenHeight = Math.ceil((FlxG.height * 0.5) / 64) + FlxG.random.int(1, 10);
@@ -117,23 +130,14 @@ class Terrain extends FlxSpriteGroup {
             return;
         }
 
-        collisionMembers.sort((a, b) -> Std.int(a.x - b.x));
-        members.sort((a, b) -> Std.int(a.x - b.x));
-
-        while(Std.int(collisionMembers[0].x) <= -(FlxG.width * 0.5) - 64) {
-            collisionMembers.shift();
-        }
-
-        while(Std.int(members[0].x) <= -(FlxG.width * 0.5) - 64) {
-            remove(members[0], true);
-        }
+        clearBlocksBeforeX(members, -(FlxG.width * 0.5) - 64, true);
     }
 
     override public function update(elapsed:Float):Void {
         super.update(elapsed);
 
         if(!collisionWall) {
-            backwardsVelocity.x += elapsed * 10;
+            backwardsVelocity.x += elapsed * 20;
         }else {
             backwardsVelocity.x = 0;
         }

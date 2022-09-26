@@ -15,6 +15,8 @@ class BetterUIStates extends FlxUIState {
     var transInType:String;
 	var transOutType:String;
 
+	@:final var controls:Controls = new Controls('player1', Solo);
+
     public function new(?transInType:String, ?transOutType:String) {
         if(transInType != null) {
 			this.transInType = transInType;

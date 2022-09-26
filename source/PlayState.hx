@@ -9,7 +9,6 @@ import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import flixel.util.FlxColor;
 
-import feshixl.FeshSprite;
 import feshixl.FeshCamera;
 
 class PlayState extends BetterUIStates {
@@ -18,7 +17,8 @@ class PlayState extends BetterUIStates {
 
 	private var camFollow:FlxObject;
 
-	private var player:FeshSprite;
+	private var player:Player;
+	private var terrain:Terrain;
 
 	override public function create():Void {
 		camGame = new FeshCamera();
@@ -33,9 +33,9 @@ class PlayState extends BetterUIStates {
 		sky.cyan = 20;
 		add(sky);
 
-		var terrain:Terrain = new Terrain();
+		terrain = new Terrain();
 
-		player = new FeshSprite(0, terrain.maxiumHeight - (terrain.firstGenHeight * 64) - 64);
+		player = new Player(0, terrain.maxiumHeight - (terrain.firstGenHeight * 64) - 64);
 		player.loadGraphic(AssetPath.image("assets/images/ground1"));
 		player.setGraphicSize(64, 64);
 		player.updateHitbox();
@@ -54,12 +54,25 @@ class PlayState extends BetterUIStates {
 
 	override public function update(elapsed:Float):Void {
 		camFollow.y = player.getMidpoint().y;
+		terrain.clearBlocksBeforeX(terrain.collisionMembers, player.x - 64);
+		player.gravity = topCollision(player);
 
 		super.update(elapsed);
 	}
 
-	function generateTerrain():Void {
-		//for(x in 0...)
+	function topCollision(p:Player):Float {
+		var gravity:Float = 1000;
+
+		for(i in 0...terrain.collisionMembers.length) {
+			if(Math.floor(terrain.collisionMembers[i].x / 64) * 64 == Math.floor(p.x / 64) * 64 || Math.ceil(terrain.collisionMembers[i].x / 64) * 64 == Math.ceil(p.x / 64) * 64) {
+				if(p.y > terrain.collisionMembers[i].y - 64) {
+					//gravity = 0;
+					break;
+				}
+			}
+		}
+
+		return gravity;
 	}
 
 	function start_HelloWorld():Void {
