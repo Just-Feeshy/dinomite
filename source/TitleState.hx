@@ -8,4 +8,12 @@ class TitleState extends BetterUIStates {
 
         super.create();
     }
+
+    function initSave():Void {
+        FlxG.save.bind('dinomite', 'Los Gay Boys');
+
+        if(FlxG.save.data.highScore == null) {
+            FlxG.save.data.highScore = 0;
+        }
+    }
 }

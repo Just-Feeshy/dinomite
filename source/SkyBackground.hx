@@ -23,7 +23,7 @@ class SkyBackground extends FlxSprite {
 
     function set_cyan(value:UInt):UInt {
         skyColor = FlxColor.fromRGB(0, value, value);
-        darkerColor = FlxColor.fromRGB(0, Std.int(value * 0.5), Std.int(value * 0.5));
+        darkerColor = FlxColor.fromRGB(0, Std.int(value * 1), Std.int(value * 1));
 
         if(bitmapGradiend != null) {
             bitmapGradiend = FlxDestroyUtil.dispose(bitmapGradiend);
