@@ -20,11 +20,15 @@ class PlayState extends BetterUIStates {
 	private var player:Player;
 	private var terrain:Terrain;
 
+	private var scoreTxt:FlxText; 
+
 	private var gravity:Float = 100000;
 	private var jumpForce:Float = 0;
 
 	private var addJumpForce:Bool = false;
 	private var doubleJump:Bool = true;
+
+	private var score:Int = 0;
 
 	@:final private var playerCamOffset:Int = 128;
 
@@ -44,7 +48,6 @@ class PlayState extends BetterUIStates {
 		terrain = new Terrain();
 
 		player = new Player(0, terrain.maxiumHeight - (terrain.firstGenHeight * 64) - 64);
-		player.loadGraphic(AssetPath.image("assets/images/ground1"));
 		player.setGraphicSize(64, 64);
 		player.updateHitbox();
 
@@ -56,6 +59,11 @@ class PlayState extends BetterUIStates {
 		add(camFollow);
 
 		FlxG.camera.follow(camFollow, LOCKON, 0.04);
+
+		scoreTxt = new FlxText(20, 20, "Score: ", 32);
+		scoreTxt.scrollFactor.set(0, 0);
+		scoreTxt.borderSize = 10;
+		add(scoreTxt);
 
 		super.create();
 	}
@@ -88,6 +96,9 @@ class PlayState extends BetterUIStates {
 			doubleJump = true;
 		}
 
+		scoreTxt.text = "Score: " + Std.int(-terrain.x * 0.01);
+
+
 		super.update(elapsed);
 	}
 
@@ -95,7 +106,7 @@ class PlayState extends BetterUIStates {
 		player.isTouchingGround = false;
 
 		if(gravity <= 0) {
-			gravity = 100000;
+			gravity = 90000;
 		}
 
 		for(i in 0...terrain.collisionMembers.length) {
@@ -114,7 +125,7 @@ class PlayState extends BetterUIStates {
 		}
 
 		if(gravity > 0) {
-			gravity += elapsed * 5000 * 64;
+			gravity += elapsed * 4500 * 64;
 		}
 
 		return gravity;
