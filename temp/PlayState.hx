@@ -192,15 +192,13 @@ class PlayState extends BetterUIStates {
 			}
 		}
 
-		FlxG.sound.music.stop();
-
 		if(score > FlxG.save.data.highScore) {
 			FlxG.save.data.highScore = score;
 			FlxG.save.flush();
 		}
 
 		stopGame = true;
-		openSubState(new GameOverSubstate());
+		openSubState(new DeathScreen());
 	}
 
 	function set_stopGame(value:Bool):Bool {
@@ -212,8 +210,8 @@ class PlayState extends BetterUIStates {
 			FlxG.sound.music.stop();
 		}
 
-		persistentUpdate = !value;
-		persistentDraw = !value;
+		//persistentUpdate = !value;
+		persistentDraw = true;
 
 		return stopGame = value;
 	}

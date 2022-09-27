@@ -1,13 +1,12 @@
 package;
 
-import lime.tools.Asset;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.text.FlxText;
 import flixel.addons.ui.FlxUISubState;
 
-class DeathScreen extends FlxUISubState {
+class GameOverSubstate extends FlxUISubState {
     var background:FlxSprite;
     var gameOverText:FlxText;
 

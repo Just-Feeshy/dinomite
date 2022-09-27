@@ -4,6 +4,8 @@ import flixel.FlxG;
 
 class TitleState extends BetterUIStates {
     override public function create():Void {
+        initSave();
+
         FlxG.switchState(new PlayState());
 
         super.create();
