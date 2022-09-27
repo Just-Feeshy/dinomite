@@ -73,6 +73,10 @@ class PlayState extends BetterUIStates {
 		terrain.clearBlocksBeforeX(terrain.collisionMembers, player.x - 64);
 		player.gravity = topCollision(player, elapsed);
 
+		if(controls.DOWN) {
+			gravity += (elapsed * 4500 * 64) * 8;
+		}
+
 		if(controls.UP && (jumpForce > -1500 && player.isTouchingGround)) {
 			doubleJump = true;
 
@@ -97,7 +101,6 @@ class PlayState extends BetterUIStates {
 		}
 
 		scoreTxt.text = "Score: " + Std.int(-terrain.x * 0.01);
-
 
 		super.update(elapsed);
 	}

@@ -1,10 +1,10 @@
 package;
 
+import flixel.FlxSprite;
 import flixel.math.FlxRect;
-import feshixl.FeshSprite;
 import openfl.Lib;
 
-class Player extends FeshSprite {
+class Player extends FlxSprite {
     public var gravity:Float = 0;
     public var jumpForce:Float = 0;
 
@@ -20,7 +20,7 @@ class Player extends FeshSprite {
         animation.add("walk", [1, 2], 2, true);
         animation.play("walk");
 
-        clipRect = new FlxRect(clipRight, 0, width + clipRight, height);
+        //clipRect = new FlxRect(clipRight, 0, width + clipRight, height);
     }
 
     override function update(elapsed:Float):Void {
