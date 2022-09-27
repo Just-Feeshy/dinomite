@@ -62,7 +62,7 @@ class PlayState extends BetterUIStates {
 
 		scoreTxt = new FlxText(20, 20, "Score: ", 32);
 		scoreTxt.scrollFactor.set(0, 0);
-		scoreTxt.borderSize = 10;
+		scoreTxt.borderSize = 20;
 		add(scoreTxt);
 
 		super.create();
