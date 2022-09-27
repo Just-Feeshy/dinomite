@@ -16,6 +16,8 @@ class Terrain extends FlxSpriteGroup {
 
     public var collisionWall(default, set):Bool = false;
 
+    public var stopVelocity:Bool = false;
+
     var genDistance:UInt = 0;
 
     var genLayersIndex:UInt = 0;
@@ -158,18 +160,20 @@ class Terrain extends FlxSpriteGroup {
     }
 
     @:noCompletion override function updateMotion(elapsed:Float):Void {
-        super.updateMotion(elapsed);
+        if(!stopVelocity) {
+            super.updateMotion(elapsed);
 
-		var velocityDelta:Float = 0.5 * (FlxVelocity.computeVelocity(backwardsVelocity.x, acceleration.x, drag.x, maxVelocity.x, elapsed) - backwardsVelocity.x);
-        backwardsVelocity.x += velocityDelta;
-        var delta = backwardsVelocity.x * elapsed;
-		backwardsVelocity.x += velocityDelta;
-		x -= delta;
+            var velocityDelta:Float = 0.5 * (FlxVelocity.computeVelocity(backwardsVelocity.x, acceleration.x, drag.x, maxVelocity.x, elapsed) - backwardsVelocity.x);
+            backwardsVelocity.x += velocityDelta;
+            var delta = backwardsVelocity.x * elapsed;
+            backwardsVelocity.x += velocityDelta;
+            x -= delta;
 
-        velocityDelta = 0.5 * (FlxVelocity.computeVelocity(backwardsVelocity.y, acceleration.y, drag.y, maxVelocity.y, elapsed) - backwardsVelocity.y);
-		backwardsVelocity.y += velocityDelta;
-		delta = backwardsVelocity.y * elapsed;
-		backwardsVelocity.y += velocityDelta;
-		y -= delta;
+            velocityDelta = 0.5 * (FlxVelocity.computeVelocity(backwardsVelocity.y, acceleration.y, drag.y, maxVelocity.y, elapsed) - backwardsVelocity.y);
+            backwardsVelocity.y += velocityDelta;
+            delta = backwardsVelocity.y * elapsed;
+            backwardsVelocity.y += velocityDelta;
+            y -= delta;
+        }
     }
 }

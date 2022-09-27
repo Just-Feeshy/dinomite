@@ -72,6 +72,7 @@ class PlayState extends BetterUIStates {
 		camFollow.y = player.getMidpoint().y + playerCamOffset;
 		terrain.clearBlocksBeforeX(terrain.collisionMembers, player.x - 64);
 		player.gravity = topCollision(player, elapsed);
+		wallCollision(player);
 
 		if(controls.DOWN) {
 			gravity += (elapsed * 4500 * 64) * 8;
@@ -103,6 +104,23 @@ class PlayState extends BetterUIStates {
 		scoreTxt.text = "Score: " + Std.int(-terrain.x * 0.01);
 
 		super.update(elapsed);
+	}
+
+	function wallCollision(p:Player):Void {
+		var newX:Float = 0;
+
+		for(i in 0...terrain.collisionMembers.length) {
+			if(p.x > terrain.collisionMembers[i].x - 65 && p.x < terrain.collisionMembers[i].x + 65) {
+				if(p.y > terrain.collisionMembers[i].y && p.y < terrain.collisionMembers[i].y + 64) {
+					terrain.stopVelocity = true;
+					p.x = terrain.collisionMembers[i].x - 64;
+					return;
+				}
+			}
+		}
+
+		p.x = 0;
+		terrain.stopVelocity = false;
 	}
 
 	function topCollision(p:Player, elapsed:Float):Float {
