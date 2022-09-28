@@ -54,7 +54,7 @@ class PlayState extends BetterUIStates {
 		persistentDraw = true;
 
 		var sky:SkyBackground = new SkyBackground();
-		sky.cyan = 25;
+		sky.cyan = 5;
 		add(sky);
 
 		terrain = new Terrain();
@@ -143,9 +143,15 @@ class PlayState extends BetterUIStates {
 	}
 
 	function wallCollision(p:Player):Bool {
+		var c:Float = 0;
+
+		if(!p.isTouchingGround) {
+			c = 64;
+		}
+
 		for(i in 0...terrain.collisionMembers.length) {
 			if(p.x > terrain.collisionMembers[i].x - 65 && p.x < terrain.collisionMembers[i].x + 65) {
-				if(p.y > terrain.collisionMembers[i].y && p.y < terrain.collisionMembers[i].y + 64) {
+				if(p.y > terrain.collisionMembers[i].y - c && p.y < terrain.collisionMembers[i].y + 64) {
 					terrain.stopVelocity = true;
 					p.x = terrain.collisionMembers[i].x - 64;
 					return true;
