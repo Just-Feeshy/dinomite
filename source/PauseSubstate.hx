@@ -53,7 +53,7 @@ class PauseSubstate extends FlxUISubState {
             if(i == curSelected) {
                 grpItems.members[i].color = FlxColor.YELLOW;
             }else {
-                grpItems.members[i].color = FlxColor.YELLOW;
+                grpItems.members[i].color = FlxColor.WHITE;
             }
         }
     }
