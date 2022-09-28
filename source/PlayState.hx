@@ -19,6 +19,7 @@ class PlayState extends BetterUIStates {
 
 	private var player:Player;
 	private var terrain:Terrain;
+	private var river:River;
 
 	private var scoreTxt:FlxText; 
 	private var highScore:FlxText;
@@ -57,6 +58,10 @@ class PlayState extends BetterUIStates {
 		add(sky);
 
 		terrain = new Terrain();
+		river = new River(360);
+
+		var riverBottom:FlxSprite = new FlxSprite(0, 420).makeGraphic(FlxG.width, Std.int(FlxG.height * 0.75), 0xff005784);
+		riverBottom.scrollFactor.set(0, 1);
 
 		player = new Player(0, terrain.maxiumHeight - (terrain.firstGenHeight * 64) - 64);
 		player.setGraphicSize(64, 64);
@@ -64,6 +69,8 @@ class PlayState extends BetterUIStates {
 
 		add(player);
 		add(terrain);
+		add(riverBottom);
+		add(river);
 
 		camFollow = new FlxObject(0, 0, 1, 1);
 		camFollow.x = playerCamOffset;
@@ -85,6 +92,8 @@ class PlayState extends BetterUIStates {
 
 	override public function update(elapsed:Float):Void {
 		if(!stopGame) {
+			river.getX = terrain.x;
+
 			camFollow.y = player.getMidpoint().y + playerCamOffset;
 			terrain.clearBlocksBeforeX(terrain.collisionMembers, player.x - 64);
 			player.gravity = topCollision(player, elapsed);
@@ -212,6 +221,7 @@ class PlayState extends BetterUIStates {
 			FlxG.sound.music.stop();
 		}
 
+		player.jumpForce = 0;
 		return stopGame = value;
 	}
 }
