@@ -1,5 +1,6 @@
 package;
 
+import feshixl.shaders.FeshShader;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxObject;
@@ -10,6 +11,7 @@ import flixel.tweens.FlxEase;
 import flixel.util.FlxColor;
 
 import feshixl.FeshCamera;
+import feshixl.shaders.FeshShader;
 
 class PlayState extends BetterUIStates {
 	private var camGame:FeshCamera;
@@ -39,6 +41,8 @@ class PlayState extends BetterUIStates {
 	@:final private var playerCamOffset:Int = 128;
 
 	private var bloodMoon:Bool = false;
+
+	private var colorModSprites:Array<FlxSprite>;
 
 	override public function create():Void {
 		//FlxG.mouse.visible = false;
@@ -97,7 +101,18 @@ class PlayState extends BetterUIStates {
 
 		highScore = new FlxText(20, 20 + scoreTxt.height, "High Score: " + FlxG.save.data.highScore, 16);
 		highScore.scrollFactor.set(0, 0);
-		add(highScore);
+		add(highScore); 
+
+		colorModSprites = [
+			player,
+			terrain,
+			riverBottom,
+			river,
+			moon,
+		];
+
+		var bloodMoonShader:FeshShader = new FeshShader();
+		bloodMoonShader.processShader();
 
 		super.create();
 	}
@@ -144,12 +159,10 @@ class PlayState extends BetterUIStates {
 			}
 			
 			ded();
+			whenBloodMoon(score);
 
-			if(!bloodMoon && score > 100) {
-				bloodMoon = true;
-
-				trace("it's a blood moon");
-				FlxG.camera.color = FlxColor.RED;
+			if(bloodMoon) {
+				bloodMoon = false;
 			}
 
 			score = Std.int(-terrain.x * 0.01);
@@ -159,6 +172,18 @@ class PlayState extends BetterUIStates {
 		}
 
 		super.update(elapsed);
+	}
+
+	function whenBloodMoon(score:Float):Void {
+		if(bloodMoon && (score > 100 && score < 500)) {
+			bloodMoon = false;
+		}
+
+		if(!bloodMoon) {
+			return;
+		}
+
+
 	}
 
 	function wallCollision(p:Player):Bool {
