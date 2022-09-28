@@ -141,6 +141,7 @@ class PlayState extends BetterUIStates {
 				doubleJump = true;
 			}
 			
+			refurnishPlayer(player);
 			ded();
 
 			score = Std.int(-terrain.x * 0.01);
@@ -150,6 +151,19 @@ class PlayState extends BetterUIStates {
 		}
 
 		super.update(elapsed);
+	}
+
+	function refurnishPlayer(p:Player):Void {
+		if(p.isTouchingGround) {
+			for(i in 0...terrain.collisionMembers.length) {
+				if(p.y > terrain.collisionMembers[i].y && p.y < terrain.collisionMembers[i].height + 64) {
+					if(Math.floor(terrain.collisionMembers[i].x / 64) * 64 == Math.floor(p.x / 64) * 64 || Math.ceil(terrain.collisionMembers[i].x / 64) * 64 == Math.ceil(p.x / 64) * 64) {
+						p.y = terrain.collisionMembers[i].y - 64;
+						break;
+					}
+				}
+			}
+		}
 	}
 
 	function wallCollision(p:Player):Bool {
