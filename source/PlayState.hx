@@ -212,9 +212,6 @@ class PlayState extends BetterUIStates {
 			FlxG.sound.music.stop();
 		}
 
-		persistentUpdate = !value;
-		persistentDraw = !value;
-
 		return stopGame = value;
 	}
 }

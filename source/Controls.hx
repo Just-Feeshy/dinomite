@@ -531,11 +531,11 @@ class Controls extends FlxActionSet
 		switch (scheme)
 		{
 			case Solo:
-				bindKeys(Control.UP, [W, FlxKey.UP]);
-				bindKeys(Control.DOWN, [S, FlxKey.DOWN]);
+				bindKeys(Control.UP, [W, FlxKey.UP, FlxGamepadInputID.A]);
+				bindKeys(Control.DOWN, [S, FlxKey.DOWN, FlxGamepadInputID.LEFT_STICK_DIGITAL_DOWN]);
 				bindKeys(Control.LEFT, [A, FlxKey.LEFT]);
 				bindKeys(Control.RIGHT, [D, FlxKey.RIGHT]);
-				bindKeys(Control.ACCEPT, [Z, SPACE, ENTER]);
+				bindKeys(Control.ACCEPT, [Z, SPACE, ENTER, FlxGamepadInputID.A]]);
 				bindKeys(Control.BACK, [BACKSPACE, ESCAPE]);
 				bindKeys(Control.PAUSE, [P, ENTER, ESCAPE]);
 				bindKeys(Control.RESET, [R]);
