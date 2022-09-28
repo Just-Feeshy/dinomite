@@ -16,12 +16,14 @@ class TitleState extends BetterUIStates {
 
     var title:FlxTypedSpriteGroup<FlxText>;
     var grpOptions:FlxTypedSpriteGroup<FlxText>;
+    var grpCredits:FlxTypedSpriteGroup<FlxText>;
 
     var options:Array<String> = ['PLAY', 'CREDITS', 'QUIT'];
 
     var tweened:Bool = false;
 
     var camOptions:FlxCamera;
+    var camCredits:FlxCamera;
 
     var curSelected:Int = 0;
     var selected:Bool = false;
@@ -36,7 +38,9 @@ class TitleState extends BetterUIStates {
         //FlxG.mouse.visible = true;
 
         camOptions = new FlxCamera();
+        camCredits = new FlxCamera();
         FlxG.cameras.add(camOptions);
+        FlxG.cameras.add(camCredits);
 
         var moon:FlxSprite = new FlxSprite(0, 30).loadGraphic(AssetPath.image("assets/images/moon"));
 		moon.scale.x *= 2;
@@ -70,8 +74,6 @@ class TitleState extends BetterUIStates {
 
         FlxTween.tween(terrain, {y: 772}, 1, {ease: FlxEase.quadOut});
         FlxTween.tween(title, {y: FlxG.height * 0.4}, 1, {ease: FlxEase.quadOut});
-
-        //FlxG.switchState(new PlayState());
 
         title.cameras = [camOptions];
         grpOptions.cameras = [camOptions];
@@ -121,6 +123,7 @@ class TitleState extends BetterUIStates {
     }
 
     public override function update(elapsed:Float):Void {
+        camCredits.y = camOptions.y - FlxG.height;
         river.getX = terrain.x;
 
         if(!selected) {
