@@ -12,7 +12,7 @@ class PauseSubstate extends FlxUISubState {
 
     var grpItems:FlxTypedGroup<FlxText>;
 
-    var menuItems:Array<String> = ['RESUME', 'RESET', 'QUIT'];
+    var menuItems:Array<String> = ['RESUME', 'RESET', 'TITLE SCREEN', 'QUIT'];
     var curSelected:Int = 0;
 
     var selected:Bool = false;
@@ -79,8 +79,12 @@ class PauseSubstate extends FlxUISubState {
 
                         close();
                     case 1:
+                        PlayState.score = 0;
                         FlxG.resetState();
                     case 2:
+                        PlayState.score = 0;
+                        FlxG.switchState(new TitleState());
+                    case 3:
                         Sys.exit(0);
                 }
             }

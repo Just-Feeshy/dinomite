@@ -38,6 +38,8 @@ class PlayState extends BetterUIStates {
 
 	@:final private var playerCamOffset:Int = 128;
 
+	private var bloodMoon:Bool = false;
+
 	override public function create():Void {
 		//FlxG.mouse.visible = false;
 
@@ -141,8 +143,15 @@ class PlayState extends BetterUIStates {
 				doubleJump = true;
 			}
 			
-			refurnishPlayer(player);
+			//refurnishPlayer(player);
 			ded();
+
+			if(!bloodMoon && score > 100) {
+				bloodMoon = true;
+
+				trace("it's a blood moon");
+				FlxG.camera.color = FlxColor.RED;
+			}
 
 			score = Std.int(-terrain.x * 0.01);
 			scoreTxt.text = "Score: " + score;
@@ -156,9 +165,10 @@ class PlayState extends BetterUIStates {
 	function refurnishPlayer(p:Player):Void {
 		if(p.isTouchingGround) {
 			for(i in 0...terrain.collisionMembers.length) {
-				if(p.y > terrain.collisionMembers[i].y && p.y < terrain.collisionMembers[i].height + 64) {
+				if(p.y > terrain.collisionMembers[i].y - 64 && p.y < terrain.collisionMembers[i].height + 64) {
 					if(Math.floor(terrain.collisionMembers[i].x / 64) * 64 == Math.floor(p.x / 64) * 64 || Math.ceil(terrain.collisionMembers[i].x / 64) * 64 == Math.ceil(p.x / 64) * 64) {
 						p.y = terrain.collisionMembers[i].y - 64;
+						trace("hi");
 						break;
 					}
 				}
@@ -169,15 +179,16 @@ class PlayState extends BetterUIStates {
 	function wallCollision(p:Player):Bool {
 		var c:Float = 0;
 
-		if(!p.isTouchingGround) {
+		//if(!p.isTouchingGround) {
 			c = 64;
-		}
+		//}
 
 		for(i in 0...terrain.collisionMembers.length) {
 			if(p.x > terrain.collisionMembers[i].x - 65 && p.x < terrain.collisionMembers[i].x + 65) {
 				if(p.y > terrain.collisionMembers[i].y - c && p.y < terrain.collisionMembers[i].y + 64) {
 					terrain.stopVelocity = true;
 					p.x = terrain.collisionMembers[i].x - 64;
+
 					return true;
 				}
 			}
@@ -197,7 +208,7 @@ class PlayState extends BetterUIStates {
 
 		for(i in 0...terrain.collisionMembers.length) {
 			if(Math.floor(terrain.collisionMembers[i].x / 64) * 64 == Math.floor(p.x / 64) * 64 || Math.ceil(terrain.collisionMembers[i].x / 64) * 64 == Math.ceil(p.x / 64) * 64) {
-				if(p.y >= terrain.collisionMembers[i].y - 64 && p.y < terrain.collisionMembers[i].y) {
+				if(p.y >= terrain.collisionMembers[i].y - 88 && p.y < terrain.collisionMembers[i].y) {
 					p.isTouchingGround = true;
 
 					if(p.gravity != 0) {
