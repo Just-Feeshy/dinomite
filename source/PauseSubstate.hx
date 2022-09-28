@@ -63,11 +63,11 @@ class PauseSubstate extends FlxUISubState {
     public override function update(elapsed:Float):Void {
         if(!selected) {
             if(controls.UP_P) {
-                changeSelection(1);
+                changeSelection(-1);
             }
 
             if(controls.DOWN_P) {
-                changeSelection(-1);
+                changeSelection(1);
             }
 
             if(controls.ACCEPT) {

@@ -21,14 +21,16 @@ class BetterUIStates extends FlxUIState {
         if(transInType != null) {
 			this.transInType = transInType;
 		}else {
-			this.transInType = "fade";
+			this.transInType = "";
 		}
 
 		if(transOutType != null) {
 			this.transOutType = transOutType;
 		}else {
-			this.transOutType = "tile";
+			this.transOutType = "";
 		}
+
+		transitionBuilds.set("tile", TileTransition);
 
 		super();
     }
@@ -72,5 +74,17 @@ class BetterUIStates extends FlxUIState {
 
 			openSubState(_transition);
 		}
+	}
+
+	override function switchTo(state:FlxState):Bool {
+		if(transOutType.length == 0) {
+			return true;
+		}
+
+		if(!transOutFinished) {
+			transitionOut(state);
+		}
+
+		return transOutFinished;
 	}
 }

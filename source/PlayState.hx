@@ -39,7 +39,7 @@ class PlayState extends BetterUIStates {
 	@:final private var playerCamOffset:Int = 128;
 
 	override public function create():Void {
-		FlxG.mouse.visible = false;
+		//FlxG.mouse.visible = false;
 
 		if (FlxG.sound.music != null) {
 			FlxG.sound.music.stop();
