@@ -35,7 +35,7 @@ class River extends FlxSpriteGroup {
     }
 
     override public function update(elapsed:Float):Void {
-        x = getX - (totalTicks * 40);
+        x = getX - (totalTicks * 64);
 
         if(members[0].x < -64) {
             remove(members[0], true);
