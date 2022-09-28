@@ -67,6 +67,14 @@ class PlayState extends BetterUIStates {
 		player.setGraphicSize(64, 64);
 		player.updateHitbox();
 
+		var moon:FlxSprite = new FlxSprite(0, 0).loadGraphic(AssetPath.image("assets/images/moon"));
+		moon.scale.x *= 2;
+		moon.scale.y *= 2;
+		moon.updateHitbox();
+		moon.x = FlxG.width - moon.width - 60;
+		moon.scrollFactor.set(0.1, 0.1);
+		add(moon);
+
 		add(player);
 		add(terrain);
 		add(riverBottom);
