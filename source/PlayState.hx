@@ -123,6 +123,10 @@ class PlayState extends BetterUIStates {
 				addJumpForce = true;
 			}
 
+			if(controls.ACCEPT || controls.BACK) {
+				pause();
+			}
+
 			if(player.isTouchingGround) {
 				doubleJump = true;
 			}
@@ -189,9 +193,11 @@ class PlayState extends BetterUIStates {
 		add(helloWorld);
 	}
 
-	function pauseMenu():Void {
+	function pause():Void {
 		persistentUpdate = false;
 		persistentDraw = true;
+
+		openSubState(new PauseSubstate());
 	}
 
 	function ded():Void {
@@ -223,5 +229,12 @@ class PlayState extends BetterUIStates {
 
 		player.jumpForce = 0;
 		return stopGame = value;
+	}
+
+	public override function closeSubState():Void {
+		persistentUpdate = true;
+		persistentDraw = true;
+
+		super.closeSubState();
 	}
 }

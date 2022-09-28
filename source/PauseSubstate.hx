@@ -1,0 +1,73 @@
+package;
+
+import flixel.FlxG;
+import flixel.FlxSprite;
+import flixel.util.FlxColor;
+import flixel.text.FlxText;
+import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.addons.ui.FlxUISubState;
+
+class PauseSubstate extends FlxUISubState {
+    var background:FlxSprite;
+
+    var grpItems:FlxTypedGroup<FlxText>;
+
+    var menuItems:Array<String> = ['RESUME'];
+    var curSelected:Int = 0;
+
+    @:final var controls:Controls = new Controls('player1', Solo);
+
+    public function new() {
+        super();
+
+        if(FlxG.sound.music.playing) {
+			FlxG.sound.music.pause();
+		}
+
+        background = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
+        background.alpha = 0.6;
+        background.scrollFactor.set(0, 0);
+        add(background);
+
+        grpItems = new FlxTypedGroup<FlxText>();
+        add(grpItems);
+
+        for(i in 0...menuItems.length) {
+            var item:FlxText = new FlxText(40, (20 * i) + 300, menuItems[i], 32);
+            item.scrollFactor.set(0, 0);
+            grpItems.add(item);
+        }
+
+        changeSelection();
+    }
+
+    function changeSelection(change:Int = 0):Void {
+        curSelected += change;
+
+		if (curSelected < 0)
+			curSelected = menuItems.length - 1;
+		if (curSelected >= menuItems.length)
+			curSelected = 0;
+
+        for(i in 0...grpItems.length) {
+            if(i == curSelected) {
+                grpItems.members[i].color = FlxColor.YELLOW;
+            }else {
+                grpItems.members[i].color = FlxColor.YELLOW;
+            }
+        }
+    }
+
+    public override function update(elapsed:Float):Void {
+        if(controls.ACCEPT) {
+            switch(curSelected) {
+                case 0:
+                    FlxG.sound.music.resume();
+
+                    close();
+            }
+        }
+
+        super.update(elapsed);
+    }
+}
