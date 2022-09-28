@@ -4,8 +4,6 @@ import flixel.FlxG;
 import flixel.FlxCamera;
 
 class TitleState extends BetterUIStates {
-    var camBackground:FlxCamera;
-
     override public function create():Void {
         initSave();
 
