@@ -15,6 +15,8 @@ class PauseSubstate extends FlxUISubState {
     var menuItems:Array<String> = ['RESUME', 'QUIT'];
     var curSelected:Int = 0;
 
+    var selected:Bool = false;
+
     @:final var controls:Controls = new Controls('player1', Solo);
 
     public function new() {
@@ -33,7 +35,7 @@ class PauseSubstate extends FlxUISubState {
         add(grpItems);
 
         for(i in 0...menuItems.length) {
-            var item:FlxText = new FlxText(40, (30 * i) + 300, menuItems[i], 32);
+            var item:FlxText = new FlxText(40, (45 * i) + 360, menuItems[i], 32);
             item.scrollFactor.set(0, 0);
             grpItems.add(item);
         }
@@ -59,14 +61,26 @@ class PauseSubstate extends FlxUISubState {
     }
 
     public override function update(elapsed:Float):Void {
-        if(controls.ACCEPT) {
-            switch(curSelected) {
-                case 0:
-                    FlxG.sound.music.resume();
+        if(!selected) {
+            if(controls.UP_P) {
+                changeSelection(1);
+            }
 
-                    close();
-                case 1:
-                    Sys.exit(0);
+            if(controls.DOWN_P) {
+                changeSelection(-1);
+            }
+
+            if(controls.ACCEPT) {
+                selected = true;
+
+                switch(curSelected) {
+                    case 0:
+                        FlxG.sound.music.resume();
+
+                        close();
+                    case 1:
+                        Sys.exit(0);
+                }
             }
         }
 

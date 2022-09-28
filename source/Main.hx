@@ -16,7 +16,7 @@ class Main extends Sprite
 	#if debug
 	var fullscreen:Bool = false;
 	#else
-	var fullscreen:Bool = false;
+	var fullscreen:Bool = true;
 	#end
 
 	public static function main():Void {

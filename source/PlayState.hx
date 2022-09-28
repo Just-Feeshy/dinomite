@@ -71,7 +71,7 @@ class PlayState extends BetterUIStates {
 		moon.scale.x *= 2;
 		moon.scale.y *= 2;
 		moon.updateHitbox();
-		moon.x = FlxG.width - moon.width - 60;
+		moon.x = FlxG.width - moon.width - 90;
 		moon.scrollFactor.set(0.1, 0.1);
 		add(moon);
 
