@@ -143,7 +143,6 @@ class PlayState extends BetterUIStates {
 				doubleJump = true;
 			}
 			
-			//refurnishPlayer(player);
 			ded();
 
 			if(!bloodMoon && score > 100) {
@@ -162,26 +161,8 @@ class PlayState extends BetterUIStates {
 		super.update(elapsed);
 	}
 
-	function refurnishPlayer(p:Player):Void {
-		if(p.isTouchingGround) {
-			for(i in 0...terrain.collisionMembers.length) {
-				if(p.y > terrain.collisionMembers[i].y - 64 && p.y < terrain.collisionMembers[i].height + 64) {
-					if(Math.floor(terrain.collisionMembers[i].x / 64) * 64 == Math.floor(p.x / 64) * 64 || Math.ceil(terrain.collisionMembers[i].x / 64) * 64 == Math.ceil(p.x / 64) * 64) {
-						p.y = terrain.collisionMembers[i].y - 64;
-						trace("hi");
-						break;
-					}
-				}
-			}
-		}
-	}
-
 	function wallCollision(p:Player):Bool {
-		var c:Float = 0;
-
-		//if(!p.isTouchingGround) {
-			c = 64;
-		//}
+		var c:Float = 64;
 
 		for(i in 0...terrain.collisionMembers.length) {
 			if(p.x > terrain.collisionMembers[i].x - 65 && p.x < terrain.collisionMembers[i].x + 65) {
