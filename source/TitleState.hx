@@ -7,6 +7,8 @@ class TitleState extends BetterUIStates {
     override public function create():Void {
         initSave();
 
+        FlxG.mouse.visible = true;
+
         FlxG.switchState(new PlayState());
 
         super.create();
