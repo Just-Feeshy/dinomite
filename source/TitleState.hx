@@ -10,6 +10,8 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 
+import openfl.ui.Mouse;
+
 class TitleState extends BetterUIStates {
     var river:River;
     var terrain:Terrain;
@@ -40,8 +42,7 @@ class TitleState extends BetterUIStates {
     }
 
     override public function create():Void {
-        FlxG.mouse.enabled = false;
-        FlxG.mouse.visible = false;
+        Mouse.hide();
 
         initSave();
 
