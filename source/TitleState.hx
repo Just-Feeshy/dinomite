@@ -17,7 +17,11 @@ class TitleState extends BetterUIStates {
     var title:FlxTypedSpriteGroup<FlxText>;
     var grpOptions:FlxTypedSpriteGroup<FlxText>;
 
+    #if web
+    var options:Array<String> = ['PLAY', 'CREDITS'];
+    #else
     var options:Array<String> = ['PLAY', 'CREDITS', 'QUIT'];
+    #end
 
     @:final var credits:String = "Luke Barbary - Game Director\n\nDiego Fonseca - Programmer\n\nJohn Jenson - Was There\n\n\nTrevor Lentz - Main Game Music\n\nCleyton Kauffman - Game Over Music\n\nFato Shadow - Title Screen Music\n\nOpenGameArt - Game Assets";
 
@@ -32,7 +36,7 @@ class TitleState extends BetterUIStates {
     var creditMenu:Bool = false;
 
     public function new() {
-        super("", "tile");
+        super("", "");
     }
 
     override public function create():Void {
@@ -169,7 +173,9 @@ class TitleState extends BetterUIStates {
                         FlxTween.tween(camOptions, {y: -FlxG.height}, 1, {ease: FlxEase.quadOut});
                         creditMenu = true;
                     case 2:
+                        #if sys
                         Sys.exit(0);
+                        #end
                 }
             }
 
