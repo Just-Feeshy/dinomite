@@ -40,6 +40,7 @@ class TitleState extends BetterUIStates {
     }
 
     override public function create():Void {
+        FlxG.mouse.enabled = false;
         FlxG.mouse.visible = false;
 
         initSave();
