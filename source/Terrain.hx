@@ -45,7 +45,7 @@ class Terrain extends FlxSpriteGroup {
 
     public function generateSide(x:Float = 0):Void {
         if(genLayersIndex >= genLayersMax) {
-            genHeight = Math.ceil((FlxG.height * 0.5) / 64) + FlxG.random.int(1, 10);
+            genHeight = Math.ceil((FlxG.height * 0.5) / 64) + FlxG.random.int(1, 9);
             genLayersMax = FlxG.random.int(4, 8);
             genDistance = FlxG.random.int(1, 4) * 2;
             genLayersIndex = 0;
