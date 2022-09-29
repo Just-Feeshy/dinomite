@@ -212,18 +212,38 @@ class PlayState extends BetterUIStates {
 			gravity = 90000;
 		}
 
+		var minimumHeight:Float = 0;
+		var prevMinimumHeight:Float = 0;
+		var isOnBlock:Bool = false;
+		var prevIsOnBlock:Bool = false;
+
 		for(i in 0...terrain.collisionMembers.length) {
 			if(Math.floor(terrain.collisionMembers[i].x / 64) * 64 == Math.floor(p.x / 64) * 64 || Math.ceil(terrain.collisionMembers[i].x / 64) * 64 == Math.ceil(p.x / 64) * 64) {
-				if(p.y >= terrain.collisionMembers[i].y - 88 && p.y < terrain.collisionMembers[i].y) {
-					p.isTouchingGround = true;
+				isOnBlock = true;
 
-					if(p.gravity != 0) {
-						player.jumpForce = 0;
-					}
-
-					gravity = 0;
-					break;
+				if(minimumHeight > terrain.collisionMembers[i].y) {
+					minimumHeight = terrain.collisionMembers[i].y;
 				}
+			}
+
+			if(Math.floor(terrain.collisionMembers[i].x / 64) * 64 == Math.floor((p.x - 64) / 64) * 64 || Math.ceil(terrain.collisionMembers[i].x / 64) * 64 == Math.ceil((p.x - 64) / 64) * 64) {
+				prevIsOnBlock = true;
+			}
+		}
+
+		if(isOnBlock) {
+			if(prevIsOnBlock && p.y > minimumHeight - 64) {
+				p.y = minimumHeight - 64;
+			}
+
+			if(p.y >= minimumHeight - 64) {
+				p.isTouchingGround = true;
+
+				if(p.gravity != 0) {
+					p.jumpForce = 0;
+				}
+
+				gravity = 0;
 			}
 		}
 

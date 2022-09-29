@@ -36,6 +36,14 @@ class TitleState extends BetterUIStates {
         initSave();
 
         //FlxG.mouse.visible = true;
+        //fato_shadow_-_main_menu.mp3
+
+        if (FlxG.sound.music != null) {
+			FlxG.sound.music.stop();
+		}
+
+		FlxG.sound.playMusic(AssetPath.music("fato_shadow_-_main_menu"));
+        FlxG.sound.music.fadeIn(10, 0, 0.5);
 
         camOptions = new FlxCamera();
         camCredits = new FlxCamera();
