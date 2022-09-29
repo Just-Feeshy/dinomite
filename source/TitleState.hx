@@ -16,17 +16,20 @@ class TitleState extends BetterUIStates {
 
     var title:FlxTypedSpriteGroup<FlxText>;
     var grpOptions:FlxTypedSpriteGroup<FlxText>;
-    var grpCredits:FlxTypedSpriteGroup<FlxText>;
 
     var options:Array<String> = ['PLAY', 'CREDITS', 'QUIT'];
+
+    @:final var credits:String = "Luke Barbary - Game Director\n\nDiego Fonseca - Programmer\n\nJohn Jenson - Was There\n\n\nTrevor Lentz - Main Game Music\n\nCleyton Kauffman - Game Over Music\n\nFato Shadow - Title Screen Music\n\nOpenGameArt - Game Assets";
 
     var tweened:Bool = false;
 
     var camOptions:FlxCamera;
     var camCredits:FlxCamera;
+    var camBackground:FlxCamera;
 
     var curSelected:Int = 0;
     var selected:Bool = false;
+    var creditMenu:Bool = false;
 
     public function new() {
         super("", "tile");
@@ -35,9 +38,6 @@ class TitleState extends BetterUIStates {
     override public function create():Void {
         initSave();
 
-        //FlxG.mouse.visible = true;
-        //fato_shadow_-_main_menu.mp3
-
         if (FlxG.sound.music != null) {
 			FlxG.sound.music.stop();
 		}
@@ -45,10 +45,18 @@ class TitleState extends BetterUIStates {
 		FlxG.sound.playMusic(AssetPath.music("fato_shadow_-_main_menu"));
         FlxG.sound.music.fadeIn(10, 0, 0.5);
 
+        camBackground = new FlxCamera();
+        FlxG.cameras.setDefaultDrawTarget(camBackground, true);
+		FlxG.cameras.reset(camBackground);
+
         camOptions = new FlxCamera();
         camCredits = new FlxCamera();
         FlxG.cameras.add(camOptions);
         FlxG.cameras.add(camCredits);
+
+        camOptions.bgColor.alpha = 0;
+        camCredits.bgColor.alpha = 0;
+        camBackground.bgColor.alpha = 0;
 
         var moon:FlxSprite = new FlxSprite(0, 30).loadGraphic(AssetPath.image("assets/images/moon"));
 		moon.scale.x *= 2;
@@ -80,11 +88,18 @@ class TitleState extends BetterUIStates {
 
         add(grpOptions);
 
+        var credits:FlxText = new FlxText(40, 40, credits, 32);
+        add(credits);
+
         FlxTween.tween(terrain, {y: 772}, 1, {ease: FlxEase.quadOut});
         FlxTween.tween(title, {y: FlxG.height * 0.4}, 1, {ease: FlxEase.quadOut});
 
         title.cameras = [camOptions];
         grpOptions.cameras = [camOptions];
+        moon.cameras = [camBackground];
+        terrain.cameras = [camBackground];
+        river.cameras = [camBackground];
+        credits.cameras = [camCredits];
 
         changeSelection();
 
@@ -131,7 +146,7 @@ class TitleState extends BetterUIStates {
     }
 
     public override function update(elapsed:Float):Void {
-        camCredits.y = camOptions.y - FlxG.height;
+        camCredits.y = camOptions.y + FlxG.height;
         river.getX = terrain.x;
 
         if(!selected) {
@@ -149,9 +164,18 @@ class TitleState extends BetterUIStates {
                 switch(curSelected) {
                     case 0:
                         FlxG.switchState(new PlayState());
+                    case 1:
+                        selected = false;
+                        FlxTween.tween(camOptions, {y: -FlxG.height}, 1, {ease: FlxEase.quadOut});
+                        creditMenu = true;
                     case 2:
                         Sys.exit(0);
                 }
+            }
+
+            if(controls.BACK && creditMenu) {
+                creditMenu = false;
+                FlxTween.tween(camOptions, {y: 0}, 1, {ease: FlxEase.quadOut});
             }
         }
 
