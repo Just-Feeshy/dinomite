@@ -40,6 +40,8 @@ class TitleState extends BetterUIStates {
     }
 
     override public function create():Void {
+        FlxG.mouse.visible = false;
+
         initSave();
 
         if (FlxG.sound.music != null) {
