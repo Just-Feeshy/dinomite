@@ -9,12 +9,12 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import flixel.util.FlxColor;
-
 import feshixl.FeshCamera;
-import feshixl.shaders.FeshShader;
+import openfl.filters.ShaderFilter;
 
 class PlayState extends BetterUIStates {
 	private var camGame:FeshCamera;
+	private var camUI:FeshCamera;
 	private var camGen:FeshCamera;
 
 	private var camFollow:FlxObject;
@@ -54,9 +54,15 @@ class PlayState extends BetterUIStates {
 		FlxG.sound.playMusic(AssetPath.music("pixel-river"));
 
 		camGame = new FeshCamera();
+		camUI = new FeshCamera();
+		camGame.bgColor.alpha = 0;
+		camUI.bgColor.alpha = 0;
+
+		FlxG.cameras.add(camUI);
 
 		FlxG.cameras.setDefaultDrawTarget(camGame, true);
 		FlxG.cameras.reset(camGame);
+		
 
 		persistentUpdate = true;
 		persistentDraw = true;
@@ -111,8 +117,7 @@ class PlayState extends BetterUIStates {
 			moon,
 		];
 
-		var bloodMoonShader:FeshShader = new FeshShader();
-		bloodMoonShader.processShader();
+		FlxG.camera.setFilters([new ShaderFilter(new BloodMoonShader())]);
 
 		super.create();
 	}
@@ -175,15 +180,13 @@ class PlayState extends BetterUIStates {
 	}
 
 	function whenBloodMoon(score:Float):Void {
-		if(bloodMoon && (score > 100 && score < 500)) {
-			bloodMoon = false;
+		if((score > 100 && score < 500)) {
+			if(bloodMoon) {
+				bloodMoon = false;
+
+
+			}
 		}
-
-		if(!bloodMoon) {
-			return;
-		}
-
-
 	}
 
 	function wallCollision(p:Player):Bool {
