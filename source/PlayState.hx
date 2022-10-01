@@ -17,6 +17,8 @@ class PlayState extends BetterUIStates {
 	private var camUI:FeshCamera;
 	private var camGen:FeshCamera;
 
+	private var bloodMoonShader:BloodMoonShader;
+
 	private var camFollow:FlxObject;
 
 	private var player:Player;
@@ -41,6 +43,7 @@ class PlayState extends BetterUIStates {
 	@:final private var playerCamOffset:Int = 128;
 
 	private var bloodMoon:Bool = false;
+	private var onBloodMoon:Bool = false;
 
 	private var colorModSprites:Array<FlxSprite>;
 
@@ -58,10 +61,10 @@ class PlayState extends BetterUIStates {
 		camGame.bgColor.alpha = 0;
 		camUI.bgColor.alpha = 0;
 
-		FlxG.cameras.add(camUI);
+		FlxG.cameras.reset(camGame);
+		FlxG.cameras.add(camUI, false);
 
 		FlxG.cameras.setDefaultDrawTarget(camGame, true);
-		FlxG.cameras.reset(camGame);
 		
 
 		persistentUpdate = true;
@@ -117,7 +120,12 @@ class PlayState extends BetterUIStates {
 			moon,
 		];
 
-		FlxG.camera.setFilters([new ShaderFilter(new BloodMoonShader())]);
+		bloodMoonShader = new BloodMoonShader();
+		bloodMoonShader.redness = 0;
+		FlxG.camera.setFilters([new ShaderFilter(bloodMoonShader)]);
+
+		scoreTxt.cameras = [camUI];
+		highScore.cameras = [camUI];
 
 		super.create();
 	}
@@ -164,7 +172,7 @@ class PlayState extends BetterUIStates {
 			}
 			
 			ded();
-			whenBloodMoon(score);
+			//whenBloodMoon(score);
 
 			if(bloodMoon) {
 				bloodMoon = false;
@@ -180,13 +188,29 @@ class PlayState extends BetterUIStates {
 	}
 
 	function whenBloodMoon(score:Float):Void {
-		if((score > 100 && score < 500)) {
+		if((score > 500 && score < 1000)) {
 			if(bloodMoon) {
 				bloodMoon = false;
-
-
+				triggerBloodMoon(true);
+			}
+		}else {
+			if(onBloodMoon) {
+				bloodMoon = false;
+				triggerBloodMoon(false);
 			}
 		}
+	}
+
+	function triggerBloodMoon(onOrOff:Bool):Void {
+		onBloodMoon = onOrOff;
+
+		if(onBloodMoon) {
+			bloodMoonShader.redness = 0.8;
+		}else {
+			bloodMoonShader.redness = 0;
+		}
+
+		FlxG.camera.setFilters([new ShaderFilter(bloodMoonShader)]);
 	}
 
 	function wallCollision(p:Player):Bool {
