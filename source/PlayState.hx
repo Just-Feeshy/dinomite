@@ -13,6 +13,9 @@ import feshixl.FeshCamera;
 import openfl.filters.ShaderFilter;
 
 class PlayState extends BetterUIStates {
+	public static var eachBloodMoon:Float = 1;
+	public static var onBloodMoon:Bool = false;
+
 	private var camGame:FeshCamera;
 	private var camUI:FeshCamera;
 	private var camGen:FeshCamera;
@@ -43,14 +46,12 @@ class PlayState extends BetterUIStates {
 	@:final private var playerCamOffset:Int = 128;
 
 	private var bloodMoon:Bool = false;
-	private var onBloodMoon:Bool = false;
 
 	private var colorModSprites:Array<FlxSprite>;
 
-	private var eachBloodMoon:Float = 1;
-
 	override public function create():Void {
-		//FlxG.mouse.visible = false;
+		eachBloodMoon = 1;
+		onBloodMoon = false;
 
 		if (FlxG.sound.music != null) {
 			FlxG.sound.music.stop();
@@ -190,7 +191,7 @@ class PlayState extends BetterUIStates {
 				bloodMoon = true;
 				triggerBloodMoon(true);
 			}
-		}else if(bloodMoon) {
+		}else if(bloodMoon && score >= (1000 * eachBloodMoon) + 500) {
 			bloodMoon = false;
 
 			if(onBloodMoon) {
@@ -203,10 +204,10 @@ class PlayState extends BetterUIStates {
 		onBloodMoon = onOrOff;
 
 		if(onBloodMoon) {
+			eachBloodMoon += 0.5;
 			bloodMoonShader.redness = 0.6;
 		}else {
 			bloodMoonShader.redness = 0;
-			eachBloodMoon += 1.5;
 		}
 
 		camGame.setFilters([new ShaderFilter(bloodMoonShader)]);
@@ -291,7 +292,10 @@ class PlayState extends BetterUIStates {
 		persistentUpdate = false;
 		persistentDraw = true;
 
-		openSubState(new PauseSubstate());
+		var pauseSubState:PauseSubstate = new PauseSubstate();
+		pauseSubState.cameras = [camUI];
+
+		openSubState(pauseSubState);
 	}
 
 	function ded():Void {

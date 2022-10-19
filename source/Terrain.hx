@@ -32,6 +32,8 @@ class Terrain extends FlxSpriteGroup {
 
     var blockDistance:Float = 0;
 
+    var tempVelocity:Float = 0;
+
     public function new() {
         super();
 
@@ -40,7 +42,8 @@ class Terrain extends FlxSpriteGroup {
         genMap();
 
         acceleration.x = -startingAcceleration;
-		backwardsVelocity.x = startingVelocity;
+        tempVelocity = startingVelocity;
+		backwardsVelocity.x = tempVelocity;
     }
 
     public function generateSide(x:Float = 0):Void {
@@ -139,7 +142,13 @@ class Terrain extends FlxSpriteGroup {
         super.update(elapsed);
 
         if(!collisionWall) {
-            backwardsVelocity.x += elapsed * 15;
+            tempVelocity += elapsed * 15;
+
+            if(PlayState.onBloodMoon) {
+                backwardsVelocity.x = tempVelocity * PlayState.eachBloodMoon;
+            }else {
+                backwardsVelocity.x = tempVelocity;
+            }
         }else {
             backwardsVelocity.x = 0;
         }
