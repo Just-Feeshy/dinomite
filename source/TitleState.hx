@@ -25,7 +25,7 @@ class TitleState extends BetterUIStates {
     var options:Array<String> = ['PLAY', 'CREDITS', 'QUIT'];
     #end
 
-    @:final var credits:String = "Luke Barberry - Game Director\n\nDiego Fonseca - Programmer\n\nJohn Jensen - Was There\n\n\nTrevor Lentz - Main Game Music\n\nCleyton Kauffman - Game Over Music\n\nFato Shadow - Title Screen Music\n\nOpenGameArt - Game Assets";
+    @:final var credits:String = "Luke Barberry - Ex Game Director\n\nDiego Fonseca - Programmer\n\nJohn Jensen - Was There and Current Game Director\n\n\nTrevor Lentz - Main Game Music\n\nCleyton Kauffman - Game Over Music\n\nFato Shadow - Title Screen Music\n\nOpenGameArt - Game Assets";
 
     var tweened:Bool = false;
 

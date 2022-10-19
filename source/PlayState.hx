@@ -47,6 +47,8 @@ class PlayState extends BetterUIStates {
 
 	private var colorModSprites:Array<FlxSprite>;
 
+	private var eachBloodMoon:Float = 1;
+
 	override public function create():Void {
 		//FlxG.mouse.visible = false;
 
@@ -65,7 +67,6 @@ class PlayState extends BetterUIStates {
 		FlxG.cameras.add(camUI, false);
 
 		FlxG.cameras.setDefaultDrawTarget(camGame, true);
-		
 
 		persistentUpdate = true;
 		persistentDraw = true;
@@ -122,7 +123,7 @@ class PlayState extends BetterUIStates {
 
 		bloodMoonShader = new BloodMoonShader();
 		bloodMoonShader.redness = 0;
-		FlxG.camera.setFilters([new ShaderFilter(bloodMoonShader)]);
+		camGame.setFilters([new ShaderFilter(bloodMoonShader)]);
 
 		scoreTxt.cameras = [camUI];
 		highScore.cameras = [camUI];
@@ -172,11 +173,7 @@ class PlayState extends BetterUIStates {
 			}
 			
 			ded();
-			//whenBloodMoon(score);
-
-			if(bloodMoon) {
-				bloodMoon = false;
-			}
+			whenBloodMoon(score);
 
 			score = Std.int(-terrain.x * 0.01);
 			scoreTxt.text = "Score: " + score;
@@ -188,14 +185,15 @@ class PlayState extends BetterUIStates {
 	}
 
 	function whenBloodMoon(score:Float):Void {
-		if((score > 500 && score < 1000)) {
-			if(bloodMoon) {
-				bloodMoon = false;
+		if(score > 10 && score < 500) {
+			if(!bloodMoon) {
+				bloodMoon = true;
 				triggerBloodMoon(true);
 			}
-		}else {
+		}else if(bloodMoon) {
+			bloodMoon = false;
+
 			if(onBloodMoon) {
-				bloodMoon = false;
 				triggerBloodMoon(false);
 			}
 		}
@@ -205,12 +203,13 @@ class PlayState extends BetterUIStates {
 		onBloodMoon = onOrOff;
 
 		if(onBloodMoon) {
-			bloodMoonShader.redness = 0.8;
+			bloodMoonShader.redness = 0.6;
 		}else {
 			bloodMoonShader.redness = 0;
 		}
 
-		FlxG.camera.setFilters([new ShaderFilter(bloodMoonShader)]);
+		camGame.setFilters([new ShaderFilter(bloodMoonShader)]);
+		camGame.flashSprite.flipX = onOrOff;
 	}
 
 	function wallCollision(p:Player):Bool {
