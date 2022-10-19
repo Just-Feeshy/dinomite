@@ -19,7 +19,12 @@ class SpriteRotationSide extends Sprite {
     @:keep @:noCompletion function set_flipX(value:Bool):Bool {
         if(value != __flipX) {
             __transform.invert();
-            __transform.rotate(Math.PI);
+
+            if(value) {
+                __transform.rotate(Math.PI);
+            }else {
+                __transform.rotate(0);
+            }
 
             __setTransformDirty();
         }

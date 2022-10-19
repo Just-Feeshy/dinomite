@@ -186,7 +186,7 @@ class PlayState extends BetterUIStates {
 	}
 
 	function whenBloodMoon(score:Float):Void {
-		if(score > (1000 * eachBloodMoon) && score < (1000 * eachBloodMoon) + 500) {
+		if(score > (1000 * eachBloodMoon) && score < (1250 * eachBloodMoon)) {
 			if(!bloodMoon) {
 				bloodMoon = true;
 				triggerBloodMoon(true);
