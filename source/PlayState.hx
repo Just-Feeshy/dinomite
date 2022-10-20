@@ -208,7 +208,12 @@ class PlayState extends BetterUIStates {
 		}
 
 		camGame.setFilters([new ShaderFilter(bloodMoonShader)]);
-		camGame.flashSprite.flipX = onOrOff;
+
+		if(onBloodMoon) {
+			camGame.angle = 180;
+		else {
+			camGame.angle = 0;
+		}
 	}
 
 	function wallCollision(p:Player):Bool {
