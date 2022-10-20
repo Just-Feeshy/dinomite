@@ -191,7 +191,7 @@ class PlayState extends BetterUIStates {
 				bloodMoon = true;
 				triggerBloodMoon(true);
 			}
-		}else if(bloodMoon && score >= (1000 * eachBloodMoon) + 500) {
+		}else if(bloodMoon && score >= (1250 * eachBloodMoon)) {
 			bloodMoon = false;
 
 			if(onBloodMoon) {
