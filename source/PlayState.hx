@@ -211,7 +211,7 @@ class PlayState extends BetterUIStates {
 
 		if(onBloodMoon) {
 			camGame.angle = 180;
-		else {
+		}else {
 			camGame.angle = 0;
 		}
 	}
