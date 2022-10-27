@@ -173,8 +173,12 @@ class PlayState extends BetterUIStates {
 				doubleJump = true;
 			}
 			
-			ded();
+			ded(new GameOverSubstate());
 			whenBloodMoon(score);
+
+			if(score > 19000) {
+				ded(new GameWonSubstate());
+			}
 
 			score = Std.int(-terrain.x * 0.01);
 			scoreTxt.text = "Score: " + score;
@@ -300,7 +304,7 @@ class PlayState extends BetterUIStates {
 		openSubState(pauseSubState);
 	}
 
-	function ded():Void {
+	function ded(stop:GameOverSubstate):Void {
 		for(i in 0...terrain.collisionMembers.length) {
 			if(player.y < terrain.collisionMembers[i].y) {
 				return;
@@ -315,7 +319,7 @@ class PlayState extends BetterUIStates {
 		}
 
 		stopGame = true;
-		openSubState(new GameOverSubstate());
+		openSubState(stop);
 	}
 
 	function set_stopGame(value:Bool):Bool {
