@@ -176,10 +176,6 @@ class PlayState extends BetterUIStates {
 			ded(new GameOverSubstate());
 			whenBloodMoon(score);
 
-			if(score > 19000) {
-				ded(new GameWonSubstate());
-			}
-
 			score = Std.int(-terrain.x * 0.01);
 			scoreTxt.text = "Score: " + score;
 		}else {
