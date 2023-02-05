@@ -18,14 +18,17 @@ class TitleState extends BetterUIStates {
 
     var title:FlxTypedSpriteGroup<FlxText>;
     var grpOptions:FlxTypedSpriteGroup<FlxText>;
+    var creditsText:FlxText;
+    var playerOptions:OptionGroup;
 
     #if web
-    var options:Array<String> = ['PLAY', 'CREDITS'];
+    var options:Array<String> = ['PLAY', 'HOW TO PLAY', 'CREDITS'];
     #else
-    var options:Array<String> = ['PLAY', 'CREDITS', 'QUIT'];
+    var options:Array<String> = ['PLAY', 'CREDITS', 'OPTIONS', 'QUIT'];
     #end
 
-    @:final var credits:String = "Luke Barberry - Ex Game Director\n\nDiego Fonseca - Programmer\n\nJohn Jensen - Was There and Current Game Director\n\n\nTrevor Lentz - Main Game Music\n\nCleyton Kauffman - Game Over Music\n\nFato Shadow - Title Screen Music\n\nOpenGameArt - Game Assets";
+    var credits:String = "Luke Barberry - Ex Game Director\n\nDiego Fonseca - Programmer\n\nJohn Jensen - Was There\n\n\nTrevor Lentz - Main Game Music\n\nCleyton Kauffman - Game Over Music\n\nFato Shadow - Title Screen Music\n\nOpenGameArt - Game Assets";
+    var howToPlay:String = "";
 
     var tweened:Bool = false;
 
@@ -38,13 +41,15 @@ class TitleState extends BetterUIStates {
     var creditMenu:Bool = false;
 
     public function new() {
-        super("", "");
+        super("", "tiles");
     }
 
     override public function create():Void {
         Mouse.hide();
 
         initSave();
+
+        PlayState.GAME_FADE = "";
 
         if (FlxG.sound.music != null) {
 			FlxG.sound.music.stop();
@@ -76,10 +81,15 @@ class TitleState extends BetterUIStates {
 
         terrain = new Terrain();
         terrain.y = FlxG.height + terrain.height;
+        terrain.speed = 10;
         add(terrain);
 
         river = new River(FlxG.height - 64);
         add(river);
+
+        var riverBottom:FlxSprite = new FlxSprite(0, river.y + 128).makeGraphic(FlxG.width, Std.int(FlxG.height * 0.75), 0xff005784);
+		riverBottom.scrollFactor.set(0, 1);
+        add(riverBottom);
 
         title = new FlxTypedSpriteGroup<FlxText>();
         makeTitle();
@@ -96,8 +106,11 @@ class TitleState extends BetterUIStates {
 
         add(grpOptions);
 
-        var credits:FlxText = new FlxText(40, 40, credits, 32);
-        add(credits);
+        playerOptions = new OptionGroup();
+        add(playerOptions);
+
+        creditsText = new FlxText(40, 40, credits, 32);
+        add(creditsText);
 
         FlxTween.tween(terrain, {y: 772}, 1, {ease: FlxEase.quadOut});
         FlxTween.tween(title, {y: FlxG.height * 0.4}, 1, {ease: FlxEase.quadOut});
@@ -107,7 +120,8 @@ class TitleState extends BetterUIStates {
         moon.cameras = [camBackground];
         terrain.cameras = [camBackground];
         river.cameras = [camBackground];
-        credits.cameras = [camCredits];
+        playerOptions.cameras = [camCredits];
+        creditsText.cameras = [camCredits];
 
         changeSelection();
 
@@ -174,9 +188,17 @@ class TitleState extends BetterUIStates {
                         FlxG.switchState(new PlayState());
                     case 1:
                         selected = false;
+                        creditsText.visible = true;
+                        playerOptions.visible = false;
                         FlxTween.tween(camOptions, {y: -FlxG.height}, 1, {ease: FlxEase.quadOut});
                         creditMenu = true;
                     case 2:
+                        selected = false;
+                        creditsText.visible = false;
+                        playerOptions.visible = true;
+                        FlxTween.tween(camOptions, {y: -FlxG.height}, 1, {ease: FlxEase.quadOut});
+                        creditMenu = true;
+                    case 3:
                         #if sys
                         Sys.exit(0);
                         #end

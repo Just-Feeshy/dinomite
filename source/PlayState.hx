@@ -9,13 +9,12 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import flixel.util.FlxColor;
+
 import feshixl.FeshCamera;
-import openfl.filters.ShaderFilter;
+import feshixl.shaders.FeshShader;
 
 class PlayState extends BetterUIStates {
-
 	private var camGame:FeshCamera;
-	private var camUI:FeshCamera;
 	private var camGen:FeshCamera;
 
 	private var camFollow:FlxObject;
@@ -39,30 +38,32 @@ class PlayState extends BetterUIStates {
 
 	private var stopGame(default, set):Bool = false;
 
+	@:final private var playerCamOffset:Int = 128;
+
 	private var colorModSprites:Array<FlxSprite>;
 
-	private final playerCamOffset:Int = 128;
+	public static var GAME_FADE = "tiles";
+
+	public function new() {
+		super(GAME_FADE, "");
+	}
 
 	override public function create():Void {
+		GAME_FADE = "";
+
 		if (FlxG.sound.music != null) {
 			FlxG.sound.music.stop();
 		}
 
-		FlxG.sound.cache("pixel-river");
 		FlxG.sound.playMusic(AssetPath.music("pixel-river"));
 
 		camGame = new FeshCamera();
-		camUI = new FeshCamera();
-		camGame.bgColor.alpha = 0;
-		camUI.bgColor.alpha = 0;
 
+		FlxG.cameras.setDefaultDrawTarget(camGame, true);
 		FlxG.cameras.reset(camGame);
-		FlxG.cameras.add(camUI, false);
 
 		persistentUpdate = true;
 		persistentDraw = true;
-
-		FlxG.cameras.setDefaultDrawTarget(camGame, true);
 
 		var sky:SkyBackground = new SkyBackground();
 		sky.cyan = 5;
@@ -111,11 +112,11 @@ class PlayState extends BetterUIStates {
 			terrain,
 			riverBottom,
 			river,
-			moon
+			moon,
 		];
 
-		scoreTxt.cameras = [camUI];
-		highScore.cameras = [camUI];
+		var bloodMoonShader:FeshShader = new FeshShader();
+		bloodMoonShader.processShader();
 
 		super.create();
 	}
@@ -161,7 +162,7 @@ class PlayState extends BetterUIStates {
 				doubleJump = true;
 			}
 			
-			ded(new GameOverSubstate());
+			ded();
 
 			score = Std.int(-terrain.x * 0.01);
 			scoreTxt.text = "Score: " + score;
@@ -250,13 +251,10 @@ class PlayState extends BetterUIStates {
 		persistentUpdate = false;
 		persistentDraw = true;
 
-		var pauseSubState:PauseSubstate = new PauseSubstate();
-		pauseSubState.cameras = [camUI];
-
-		openSubState(pauseSubState);
+		openSubState(new PauseSubstate());
 	}
 
-	function ded(stop:GameOverSubstate):Void {
+	function ded():Void {
 		for(i in 0...terrain.collisionMembers.length) {
 			if(player.y < terrain.collisionMembers[i].y) {
 				return;
@@ -271,7 +269,7 @@ class PlayState extends BetterUIStates {
 		}
 
 		stopGame = true;
-		openSubState(stop);
+		openSubState(new GameOverSubstate());
 	}
 
 	function set_stopGame(value:Bool):Bool {

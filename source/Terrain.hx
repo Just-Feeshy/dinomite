@@ -18,6 +18,8 @@ class Terrain extends FlxSpriteGroup {
 
     public var stopVelocity:Bool = false;
 
+    public var speed:UInt = 30;
+
     var genDistance:UInt = 0;
 
     var genLayersIndex:UInt = 0;
@@ -32,8 +34,6 @@ class Terrain extends FlxSpriteGroup {
 
     var blockDistance:Float = 0;
 
-    var tempVelocity:Float = 0;
-
     public function new() {
         super();
 
@@ -42,13 +42,12 @@ class Terrain extends FlxSpriteGroup {
         genMap();
 
         acceleration.x = -startingAcceleration;
-        tempVelocity = startingVelocity;
-		backwardsVelocity.x = tempVelocity;
+		backwardsVelocity.x = startingVelocity;
     }
 
     public function generateSide(x:Float = 0):Void {
         if(genLayersIndex >= genLayersMax) {
-            genHeight = Math.ceil((FlxG.height * 0.5) / 64) + FlxG.random.int(1, 9);
+            genHeight = Math.ceil((FlxG.height * 0.5) / 64) + FlxG.random.int(1, 6);
             genLayersMax = FlxG.random.int(4, 8);
             genDistance = FlxG.random.int(1, 4) * 2;
             genLayersIndex = 0;
@@ -141,12 +140,12 @@ class Terrain extends FlxSpriteGroup {
     override public function update(elapsed:Float):Void {
         super.update(elapsed);
 
-        if(!collisionWall) {
-            if(PlayState.score < 19000) {
-                tempVelocity += elapsed * 15;
+        if(x <= 19000 * 100) {
+            if(!collisionWall) {
+                backwardsVelocity.x += elapsed * speed;
+            }else {
+                backwardsVelocity.x = 0;
             }
-        }else {
-            backwardsVelocity.x = 0;
         }
 
         if(blockDistance + x < FlxG.width) {

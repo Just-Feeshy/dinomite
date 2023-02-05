@@ -46,8 +46,6 @@ class PauseSubstate extends FlxUISubState {
         }
 
         changeSelection();
-
-        cameras = [FlxG.camera];
     }
 
     function changeSelection(change:Int = 0):Void {

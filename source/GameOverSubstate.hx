@@ -12,7 +12,7 @@ class GameOverSubstate extends FlxUISubState {
 
     @:final var controls:Controls = new Controls('player1', Solo);
 
-    public function new(text:String = "You Died") {
+    public function new() {
         super();
 
         FlxG.sound.playMusic(AssetPath.music("Retro_No_hope"));
@@ -22,14 +22,14 @@ class GameOverSubstate extends FlxUISubState {
         background.scrollFactor.set(0, 0);
         add(background);
 
-        var shadowTheHedghog:FlxText = new FlxText(0, 0, text, 64);
+        var shadowTheHedghog:FlxText = new FlxText(0, 0, "You Died", 64);
         shadowTheHedghog.color = FlxColor.BLACK;
         shadowTheHedghog.scrollFactor.set(0, 0);
         shadowTheHedghog.screenCenter();
         shadowTheHedghog.y += 8;
         add(shadowTheHedghog);
 
-        gameOverText = new FlxText(0, 0, text, 64);
+        gameOverText = new FlxText(0, 0, "You Died", 64);
         gameOverText.scrollFactor.set(0, 0);
         gameOverText.screenCenter();
         add(gameOverText);

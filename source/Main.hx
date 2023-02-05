@@ -1,15 +1,15 @@
 package;
 
-import feshixl.FeshGame;
+import flixel.FlxGame;
 import openfl.display.Sprite;
 import openfl.events.Event;
 import openfl.Lib;
 
 class Main extends Sprite
 {
-	private static var game:FeshGame;
+	private static var game:FlxGame;
 
-	var zoom:Float = 1;
+	var zoom:Int = 1;
 
 	var fps:Int = 120;
 
@@ -42,7 +42,7 @@ class Main extends Sprite
 	}
 
 	private function setupGame():Void {
-		game = new FeshGame(0, 0, TitleState, zoom, fps, fps, true, fullscreen);
+		game = new FlxGame(0, 0, TitleState, zoom, fps, fps, true, fullscreen);
 		addChild(game);
 
 		Lib.current.addChild(new Version());

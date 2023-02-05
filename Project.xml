@@ -45,6 +45,9 @@
 	<haxelib name="flixel-ui" />
 	<haxelib name="faxe" if='switch'/>
 
+	<assets path="assets/music" exclude="*.ogg" if="web"/>
+	<assets path="assets/music" exclude="*.mp3" unless="web"/>
+
 	<!--In case you want to use nape with flixel-->
 	<!--<haxelib name="nape-haxe4" />-->
 
@@ -87,8 +90,17 @@
 	<haxedef name="NAPE_RELEASE_BUILD" unless="debug" />
 
 	<!-- _________________________________ Custom _______________________________ -->
-	<icon path="icons/iconDino-16.png" size='16'/>
-	<icon path="icons/iconDino-32.png" size='32'/>
-	<icon path="icons/iconDino-64.png" size='64'/>
-	<icon path="icons/iconDino-OG.png" />
+	<section if="windows || linux">
+		<icon path="icons/iconDino-16.png" size='16'/>
+		<icon path="icons/iconDino-32.png" size='32'/>
+		<icon path="icons/iconDino-64.png" size='64'/>
+		<icon path="icons/iconDino-OG.png" />
+	</section>
+
+	<section if="HXCPP_M64">
+		<icon path="icons/iconDino-16.png" size='16'/>
+		<icon path="icons/iconDino-32.png" size='32'/>
+		<icon path="icons/iconDino-64.png" size='64'/>
+		<icon path="icons/iconDino-OG.png" />
+	</section>
 </project>

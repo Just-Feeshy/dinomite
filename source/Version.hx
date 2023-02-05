@@ -1,6 +1,7 @@
 package;
 
 import flixel.FlxG;
+import flixel.system.FlxAssets;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
 
@@ -8,7 +9,7 @@ import openfl.text.TextFormat;
 * WIP
 */
 class Version extends TextField {
-    public static final version:String = "1.0.0";
+    public static var version:String = "0.9.0";
 
     public function new() {
         super();
@@ -18,7 +19,7 @@ class Version extends TextField {
 
         this.selectable = false;
 
-        defaultTextFormat = new TextFormat("_sans", 12, 0x000000);
+        defaultTextFormat = new TextFormat(FlxAssets.FONT_DEFAULT, 18, 0xFFFFFF);
 
         width = 150;
 		height = 70;
