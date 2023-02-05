@@ -162,9 +162,19 @@ class PlayState extends BetterUIStates {
 	function wallCollision(p:Player):Bool {
 		var c:Float = 64;
 
+		for(i in 0...terrain.floorMembers.length) {
+			if(p.y > terrain.floorMembers[i].y - c && p.y < terrain.floorMembers[i].y + c) {
+				if(p.x > terrain.floorMembers[i].x - c && p.x < terrain.floorMembers[i].x + c) {
+					p.x = 0;
+					terrain.stopVelocity = false;
+					return false;
+				}
+			}
+		}
+
 		for(i in 0...terrain.collisionMembers.length) {
 			if(p.x > terrain.collisionMembers[i].x - 65 && p.x < terrain.collisionMembers[i].x + 65) {
-				if(p.y > terrain.collisionMembers[i].y - c && p.y < terrain.collisionMembers[i].y + 64) {
+				if(p.y > terrain.collisionMembers[i].y - c && p.y < terrain.collisionMembers[i].y + c) {
 					terrain.stopVelocity = true;
 					p.x = terrain.collisionMembers[i].x - 64;
 

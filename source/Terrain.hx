@@ -10,6 +10,7 @@ class Terrain extends FlxSpriteGroup {
     @:final public var maxiumHeight:Float = Std.int(FlxG.height * 0.5) + 64;
 
     public var collisionMembers(default, null):Array<FlxSprite> = [];
+    public var floorMembers(default, null):Array<FlxSprite> = [];
 
     public var firstGenHeight(default, null):UInt = 0;
     public var genHeight(default, null):UInt = 0;
@@ -73,6 +74,7 @@ class Terrain extends FlxSpriteGroup {
 		    ground.updateHitbox();
 		    addBlock(ground);
 
+            floorMembers.push(ground);
             index++;
         }
 
