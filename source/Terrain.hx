@@ -145,12 +145,6 @@ class Terrain extends FlxSpriteGroup {
             if(PlayState.score < 19000) {
                 tempVelocity += elapsed * 15;
             }
-
-            if(PlayState.onBloodMoon) {
-                backwardsVelocity.x = tempVelocity * PlayState.eachBloodMoon;
-            }else {
-                backwardsVelocity.x = tempVelocity;
-            }
         }else {
             backwardsVelocity.x = 0;
         }

@@ -13,14 +13,10 @@ import feshixl.FeshCamera;
 import openfl.filters.ShaderFilter;
 
 class PlayState extends BetterUIStates {
-	public static var eachBloodMoon:Float = 1;
-	public static var onBloodMoon:Bool = false;
 
 	private var camGame:FeshCamera;
 	private var camUI:FeshCamera;
 	private var camGen:FeshCamera;
-
-	private var bloodMoonShader:BloodMoonShader;
 
 	private var camFollow:FlxObject;
 
@@ -43,20 +39,16 @@ class PlayState extends BetterUIStates {
 
 	private var stopGame(default, set):Bool = false;
 
-	@:final private var playerCamOffset:Int = 128;
-
-	private var bloodMoon:Bool = false;
-
 	private var colorModSprites:Array<FlxSprite>;
 
-	override public function create():Void {
-		eachBloodMoon = 1;
-		onBloodMoon = false;
+	private final playerCamOffset:Int = 128;
 
+	override public function create():Void {
 		if (FlxG.sound.music != null) {
 			FlxG.sound.music.stop();
 		}
 
+		FlxG.sound.cache("pixel-river");
 		FlxG.sound.playMusic(AssetPath.music("pixel-river"));
 
 		camGame = new FeshCamera();
@@ -67,10 +59,10 @@ class PlayState extends BetterUIStates {
 		FlxG.cameras.reset(camGame);
 		FlxG.cameras.add(camUI, false);
 
-		FlxG.cameras.setDefaultDrawTarget(camGame, true);
-
 		persistentUpdate = true;
 		persistentDraw = true;
+
+		FlxG.cameras.setDefaultDrawTarget(camGame, true);
 
 		var sky:SkyBackground = new SkyBackground();
 		sky.cyan = 5;
@@ -119,12 +111,8 @@ class PlayState extends BetterUIStates {
 			terrain,
 			riverBottom,
 			river,
-			moon,
+			moon
 		];
-
-		bloodMoonShader = new BloodMoonShader();
-		bloodMoonShader.redness = 0;
-		camGame.setFilters([new ShaderFilter(bloodMoonShader)]);
 
 		scoreTxt.cameras = [camUI];
 		highScore.cameras = [camUI];
@@ -174,7 +162,6 @@ class PlayState extends BetterUIStates {
 			}
 			
 			ded(new GameOverSubstate());
-			whenBloodMoon(score);
 
 			score = Std.int(-terrain.x * 0.01);
 			scoreTxt.text = "Score: " + score;
@@ -183,37 +170,6 @@ class PlayState extends BetterUIStates {
 		}
 
 		super.update(elapsed);
-	}
-
-	function whenBloodMoon(score:Float):Void {
-		if(score > (1000 * eachBloodMoon) && score < (1250 * eachBloodMoon)) {
-			if(!bloodMoon) {
-				bloodMoon = true;
-				triggerBloodMoon(true);
-			}
-		}else if(bloodMoon && score >= (1250 * eachBloodMoon)) {
-			bloodMoon = false;	
-			triggerBloodMoon(false);
-		}
-	}
-
-	function triggerBloodMoon(onOrOff:Bool):Void {
-		onBloodMoon = onOrOff;
-
-		if(onBloodMoon) {
-			eachBloodMoon += 0.5;
-			bloodMoonShader.redness = 0.6;
-		}else {
-			bloodMoonShader.redness = 0;
-		}
-
-		camGame.setFilters([new ShaderFilter(bloodMoonShader)]);
-
-		if(onBloodMoon) {
-			camGame.angle = 180;
-		}else {
-			camGame.angle = 0;
-		}
 	}
 
 	function wallCollision(p:Player):Bool {
