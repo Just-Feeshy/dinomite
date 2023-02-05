@@ -42,15 +42,13 @@ class PlayState extends BetterUIStates {
 
 	private var colorModSprites:Array<FlxSprite>;
 
-	public static var GAME_FADE = "tiles";
+	public static var GAME_FADE = "tile";
 
 	public function new() {
-		super(GAME_FADE, "");
+		super("", "");
 	}
 
 	override public function create():Void {
-		GAME_FADE = "";
-
 		if (FlxG.sound.music != null) {
 			FlxG.sound.music.stop();
 		}
@@ -154,7 +152,7 @@ class PlayState extends BetterUIStates {
 				addJumpForce = true;
 			}
 
-			if(controls.ACCEPT || controls.BACK) {
+			if(controls.PAUSE) {
 				pause();
 			}
 

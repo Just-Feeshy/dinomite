@@ -1,6 +1,5 @@
 package;
 
-import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxCamera;
@@ -9,6 +8,8 @@ import flixel.tweens.FlxEase;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
+import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.input.keyboard.FlxKey;
 
 import openfl.ui.Mouse;
 
@@ -41,13 +42,14 @@ class TitleState extends BetterUIStates {
     var creditMenu:Bool = false;
 
     public function new() {
-        super("", "tiles");
+        super("", "void");
     }
 
     override public function create():Void {
         Mouse.hide();
 
         initSave();
+        controls.setKeyboardScheme(Solo);
 
         PlayState.GAME_FADE = "";
 
@@ -56,6 +58,7 @@ class TitleState extends BetterUIStates {
 		}
 
 		FlxG.sound.playMusic(AssetPath.music("fato_shadow_-_main_menu"));
+        FlxG.sound.music.volume = FlxG.save.data.musicVolume * 0.01;
         FlxG.sound.music.fadeIn(10, 0, 0.5);
 
         camBackground = new FlxCamera();
@@ -143,7 +146,7 @@ class TitleState extends BetterUIStates {
     }
 
     function changeSelection(change:Int = 0):Void {
-        curSelected += change;
+        if(!playerOptions.inUse) curSelected += change;
 
 		if (curSelected < 0)
 			curSelected = options.length - 1;
@@ -165,6 +168,14 @@ class TitleState extends BetterUIStates {
         if(FlxG.save.data.highScore == null) {
             FlxG.save.data.highScore = 0;
         }
+
+        if(FlxG.save.data.customKeys == null) {
+            FlxG.save.data.customKeys = {
+                UP: FlxKey.W,
+                DOWN: FlxKey.S,
+                PAUSE: FlxKey.ENTER,
+            };
+        }
     }
 
     public override function update(elapsed:Float):Void {
@@ -172,11 +183,11 @@ class TitleState extends BetterUIStates {
         river.getX = terrain.x;
 
         if(!selected) {
-            if(controls.UP_P) {
+            if(FlxG.keys.justPressed.UP || FlxG.keys.justPressed.W) {
                 changeSelection(-1);
             }
 
-            if(controls.DOWN_P) {
+            if(FlxG.keys.justPressed.DOWN || FlxG.keys.justPressed.S) {
                 changeSelection(1);
             }
 
@@ -190,13 +201,18 @@ class TitleState extends BetterUIStates {
                         selected = false;
                         creditsText.visible = true;
                         playerOptions.visible = false;
+                        playerOptions.controlSelector = false;
+                        playerOptions.inUse = false;
                         FlxTween.tween(camOptions, {y: -FlxG.height}, 1, {ease: FlxEase.quadOut});
                         creditMenu = true;
                     case 2:
                         selected = false;
                         creditsText.visible = false;
                         playerOptions.visible = true;
-                        FlxTween.tween(camOptions, {y: -FlxG.height}, 1, {ease: FlxEase.quadOut});
+                        playerOptions.inUse = true;
+                        FlxTween.tween(camOptions, {y: -FlxG.height}, 1, {ease: FlxEase.quadOut, onComplete: function(twn:FlxTween) {
+                            playerOptions.controlSelector = true;
+                        }});
                         creditMenu = true;
                     case 3:
                         #if sys
@@ -205,7 +221,7 @@ class TitleState extends BetterUIStates {
                 }
             }
 
-            if(controls.BACK && creditMenu) {
+            if(controls.BACK && creditMenu && !playerOptions.selected) {
                 creditMenu = false;
                 FlxTween.tween(camOptions, {y: 0}, 1, {ease: FlxEase.quadOut});
             }

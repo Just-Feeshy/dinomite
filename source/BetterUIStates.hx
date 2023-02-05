@@ -15,7 +15,7 @@ class BetterUIStates extends FlxUIState {
     var transInType:String;
 	var transOutType:String;
 
-	@:final var controls:Controls = new Controls('player1', Solo);
+	final controls:Controls = new Controls('player1', Solo);
 
     public function new(?transInType:String, ?transOutType:String) {
         if(transInType != null) {
@@ -31,6 +31,8 @@ class BetterUIStates extends FlxUIState {
 		}
 
 		transitionBuilds.set("tile", TileTransition);
+		transitionBuilds.set("void", VoidTransition);
+		transitionBuilds.set("fade", FadeTransition);
 
 		super();
     }
