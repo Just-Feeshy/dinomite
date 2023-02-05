@@ -23,7 +23,7 @@ class TitleState extends BetterUIStates {
     var playerOptions:OptionGroup;
 
     #if web
-    var options:Array<String> = ['PLAY', 'HOW TO PLAY', 'CREDITS'];
+    var options:Array<String> = ['PLAY', 'CREDITS', 'OPTIONS'];
     #else
     var options:Array<String> = ['PLAY', 'CREDITS', 'OPTIONS', 'QUIT'];
     #end
@@ -52,6 +52,8 @@ class TitleState extends BetterUIStates {
         controls.setKeyboardScheme(Solo);
 
         PlayState.GAME_FADE = "";
+
+        FlxG.sound.cache(AssetPath.musicString("fato_shadow_-_main_menu"));
 
         if (FlxG.sound.music != null) {
 			FlxG.sound.music.stop();

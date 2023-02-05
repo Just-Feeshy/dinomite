@@ -16,7 +16,6 @@ class GameOverSubstate extends FlxUISubState {
         super();
 
         FlxG.sound.playMusic(AssetPath.music("Retro_No_hope"));
-        FlxG.sound.music.volume = FlxG.save.data.musicVolume * 0.01;
 
         background = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
         background.alpha = 0.6;

@@ -18,7 +18,7 @@ class Terrain extends FlxSpriteGroup {
 
     public var stopVelocity:Bool = false;
 
-    public var speed:UInt = 30;
+    public var speed:UInt = 15;
 
     var genDistance:UInt = 0;
 
@@ -98,7 +98,7 @@ class Terrain extends FlxSpriteGroup {
     }
 
     function genMap():Void {
-        genLayersMax = FlxG.random.int(3, 7);
+        genLayersMax = FlxG.random.int(5, 8);
         firstGenHeight = Math.ceil((FlxG.height * 0.5) / 64) + FlxG.random.int(1, 10);
         genHeight = firstGenHeight;
 

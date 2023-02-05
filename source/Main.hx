@@ -12,12 +12,7 @@ class Main extends Sprite
 	var zoom:Int = 1;
 
 	var fps:Int = 120;
-
-	#if debug
-	var fullscreen:Bool = false;
-	#else
 	var fullscreen:Bool = true;
-	#end
 
 	public static function main():Void {
 		Lib.current.addChild(new Main());
@@ -45,6 +40,8 @@ class Main extends Sprite
 		game = new FlxGame(0, 0, TitleState, zoom, fps, fps, true, fullscreen);
 		addChild(game);
 
+		#if !debug
 		Lib.current.addChild(new Version());
+		#end
 	}
 }

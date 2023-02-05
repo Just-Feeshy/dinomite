@@ -504,7 +504,7 @@ class Controls extends FlxActionSet
 				inline bindKeys(Control.UP, [FlxG.save.data.customKeys.UP, FlxKey.UP]);
 				inline bindKeys(Control.DOWN, [FlxG.save.data.customKeys.DOWN, FlxKey.DOWN]);
 				inline bindKeys(Control.ACCEPT, [FlxKey.ENTER]);
-				inline bindKeys(Control.BACK, [FlxKey.BACKSLASH, FlxKey.ESCAPE]);
+				inline bindKeys(Control.BACK, [FlxKey.BACKSLASH, FlxKey.ESCAPE, FlxKey.DELETE]);
 				inline bindKeys(Control.PAUSE, [FlxG.save.data.customKeys.PAUSE]);
 			case Duo(true): // nothing
 			case Duo(false): // nothing

@@ -30,7 +30,6 @@ class PlayState extends BetterUIStates {
 	private var jumpForce:Float = 0;
 
 	private var addJumpForce:Bool = false;
-	private var doubleJump:Bool = true;
 
 	private var wallCollided:Bool = false;
 
@@ -99,11 +98,14 @@ class PlayState extends BetterUIStates {
 		scoreTxt = new FlxText(20, 20, "Score: ", 32);
 		scoreTxt.scrollFactor.set(0, 0);
 		scoreTxt.borderSize = 20;
-		add(scoreTxt);
 
 		highScore = new FlxText(20, 20 + scoreTxt.height, "High Score: " + FlxG.save.data.highScore, 16);
 		highScore.scrollFactor.set(0, 0);
-		add(highScore); 
+
+		#if !debug
+		add(scoreTxt);
+		add(highScore);
+		#end
 
 		colorModSprites = [
 			player,
@@ -134,8 +136,6 @@ class PlayState extends BetterUIStates {
 			}
 
 			if(controls.UP && (jumpForce > -1500 && player.isTouchingGround) && !wallCollided) {
-				doubleJump = true;
-
 				jumpForce -= 750;
 				addJumpForce = true;
 			}else if(addJumpForce) {
@@ -144,20 +144,8 @@ class PlayState extends BetterUIStates {
 				jumpForce = 0;
 			}
 
-			if(controls.UP_P && !player.isTouchingGround && doubleJump) {
-				doubleJump = false;
-				gravity = 0;
-				player.gravity = 0;
-				jumpForce -= 1500;
-				addJumpForce = true;
-			}
-
 			if(controls.PAUSE) {
 				pause();
-			}
-
-			if(player.isTouchingGround) {
-				doubleJump = true;
 			}
 			
 			ded();

@@ -30,4 +30,14 @@ class AssetPath {
 
         return OpenFlAssets.getSound("assets/music/" + path + "." + musicFormat, true);
     }
+
+    public static function musicString(path):String {
+        var pathSplit:Array<String> = path.split(".");
+
+        if(pathSplit.length > 0) {
+            path = pathSplit[0];
+        }
+
+        return "assets/music/" + path + "." + musicFormat;
+    }
 }
