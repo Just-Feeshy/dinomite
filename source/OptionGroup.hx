@@ -31,7 +31,7 @@ class OptionGroup extends FlxTypedSpriteGroup<FlxText> {
     public function new() {
         super();
 
-        createSection("Player Settings", ['Jump: ${FlxG.save.data.customKeys.UP}', 'Go Down: ${FlxG.save.data.customKeys.DOWN}', 'Pause: ${FlxG.save.data.customKeys.PAUSE}']);
+        createSection("Player Settings", ['Jump: ${FlxKey.toStringMap.get(FlxG.save.data.customKeys.UP)}', 'Go Down: ${FlxKey.toStringMap.get(FlxG.save.data.customKeys.DOWN)}', 'Pause: ${FlxKey.toStringMap.get(FlxG.save.data.customKeys.PAUSE)}']);
 
         arrow = new FlxText(0, options[0].y, "<", optionSize);
         arrow.x = options[0].x + options[0].width + arrow.width + 16;
@@ -47,7 +47,7 @@ class OptionGroup extends FlxTypedSpriteGroup<FlxText> {
         for(list in optionStr) {
             var op:FlxText = new FlxText(120, sectionHeight, list, optionSize);
             options.push(op);
-            sectionHeight += optionSize + 8;
+            sectionHeight += optionSize * 2;
             add(op);
         }
 
@@ -76,6 +76,7 @@ class OptionGroup extends FlxTypedSpriteGroup<FlxText> {
 
                     selected = false;
                     options[curSelected].text = options[curSelected].text.split(":")[0] + ": " + keyString;
+                    arrow.x = options[0].x + options[0].width + arrow.width + 16;
                     options[curSelected].color = FlxColor.WHITE;
 
                     switch(curSelected) {
