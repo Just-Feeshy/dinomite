@@ -9,7 +9,7 @@ import openfl.text.TextFormat;
 * WIP
 */
 class Version extends TextField {
-    public static var version:String = "1.0.0";
+    public static var version:String = "1.1.0";
 
     public function new() {
         super();

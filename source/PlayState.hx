@@ -213,7 +213,7 @@ class PlayState extends BetterUIStates {
 		var prevIsOnBlock:Bool = false;
 
 		for(i in 0...terrain.collisionMembers.length) {
-			if(Math.floor(terrain.collisionMembers[i].x / 64) * 64 == Math.floor(p.x / 64) * 64 || Math.ceil(terrain.collisionMembers[i].x / 64) * 64 == Math.ceil(p.x / 64) * 64) {
+			if(Math.floor(terrain.collisionMembers[i].x * 0.015625) * 64 == Math.floor(p.x * 0.015625) * 64 || Math.ceil(terrain.collisionMembers[i].x * 0.015625) * 64 == Math.ceil(p.x * 0.015625) * 64) {
 				isOnBlock = true;
 
 				if(minimumHeight > terrain.collisionMembers[i].y) {
@@ -221,7 +221,7 @@ class PlayState extends BetterUIStates {
 				}
 			}
 
-			if(Math.floor(terrain.collisionMembers[i].x / 64) * 64 == Math.floor((p.x - 64) / 64) * 64 || Math.ceil(terrain.collisionMembers[i].x / 64) * 64 == Math.ceil((p.x - 64) / 64) * 64) {
+			if(Math.floor(terrain.collisionMembers[i].x * 0.015625) * 64 == Math.floor((p.x - 64) * 0.015625) * 64 || Math.ceil(terrain.collisionMembers[i].x * 0.015625) * 64 == Math.ceil((p.x - 64) * 0.015625) * 64) {
 				prevIsOnBlock = true;
 			}
 		}
