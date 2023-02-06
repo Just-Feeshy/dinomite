@@ -67,6 +67,7 @@ class PlayState extends BetterUIStates {
 		add(sky);
 
 		terrain = new Terrain();
+		terrain.genCactis = true;
 		river = new River(360);
 
 		var riverBottom:FlxSprite = new FlxSprite(0, 420).makeGraphic(FlxG.width, Std.int(FlxG.height * 0.75), 0xff005784);
@@ -115,9 +116,6 @@ class PlayState extends BetterUIStates {
 			moon,
 		];
 
-		var bloodMoonShader:FeshShader = new FeshShader();
-		bloodMoonShader.processShader();
-
 		super.create();
 	}
 
@@ -147,6 +145,12 @@ class PlayState extends BetterUIStates {
 			if(controls.PAUSE) {
 				pause();
 			}
+
+			for(cactus in terrain.cactis) {
+				if(FlxG.collide(player, cactus)) {
+					truelyDed();
+				}
+			}
 			
 			ded();
 
@@ -161,16 +165,6 @@ class PlayState extends BetterUIStates {
 
 	function wallCollision(p:Player):Bool {
 		var c:Float = 64;
-
-		for(i in 0...terrain.floorMembers.length) {
-			if(p.y > terrain.floorMembers[i].y - c && p.y < terrain.floorMembers[i].y + c) {
-				if(p.x > terrain.floorMembers[i].x - c && p.x < terrain.floorMembers[i].x + c) {
-					p.x = 0;
-					terrain.stopVelocity = false;
-					return false;
-				}
-			}
-		}
 
 		for(i in 0...terrain.collisionMembers.length) {
 			if(p.x > terrain.collisionMembers[i].x - 65 && p.x < terrain.collisionMembers[i].x + 65) {
@@ -257,6 +251,10 @@ class PlayState extends BetterUIStates {
 			}
 		}
 
+		truelyDed();
+	}
+
+	function truelyDed():Void {
 		FlxG.sound.music.stop();
 
 		if(score > FlxG.save.data.highScore) {

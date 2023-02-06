@@ -11,6 +11,7 @@ class Terrain extends FlxSpriteGroup {
 
     public var collisionMembers(default, null):Array<FlxSprite> = [];
     public var floorMembers(default, null):Array<FlxSprite> = [];
+    public var cactis(default, null):Array<FlxSprite> = [];
 
     public var firstGenHeight(default, null):UInt = 0;
     public var genHeight(default, null):UInt = 0;
@@ -18,6 +19,7 @@ class Terrain extends FlxSpriteGroup {
     public var collisionWall(default, set):Bool = false;
 
     public var stopVelocity:Bool = false;
+    public var genCactis:Bool = false;
 
     public var speed:UInt = 15;
 
@@ -27,6 +29,7 @@ class Terrain extends FlxSpriteGroup {
     var genLayersMax:UInt = 0;
 
     var genSide:Bool = false;
+    var generatedC:Bool = false;
 
     @:final public var startingVelocity:Float = 500;
     @:final public var startingAcceleration:Float = 20;
@@ -49,11 +52,28 @@ class Terrain extends FlxSpriteGroup {
     public function generateSide(x:Float = 0):Void {
         if(genLayersIndex >= genLayersMax) {
             genHeight = Math.ceil((FlxG.height * 0.5) / 64) + FlxG.random.int(1, 6);
-            genLayersMax = FlxG.random.int(4, 8);
-            genDistance = FlxG.random.int(1, 4) * 2;
+            genLayersMax = FlxG.random.int(5, 10);
+            genDistance = FlxG.random.int(1, 3) * 2;
             genLayersIndex = 0;
+            generatedC = false;
             genSide = false;
             return;
+        }
+
+        if(genDistance > 0) {
+            genDistance--;
+            return;
+        }
+
+        if(genLayersIndex == FlxG.random.int(6, 8) && !generatedC && genCactis) {
+            generatedC = true;
+
+            var cactus:FlxSprite = new FlxSprite(x, maxiumHeight - (genHeight * 64) - 64).loadGraphic(AssetPath.image("assets/images/cactus"));
+            cactus.setGraphicSize(64, 64);
+            cactus.updateHitbox();
+            add(cactus);
+
+            cactis.push(cactus);
         }
 
         var index:UInt = 1;
@@ -114,6 +134,20 @@ class Terrain extends FlxSpriteGroup {
         }
 
         blockDistance = width;
+    }
+
+    public function clean(player:Player):Void {
+        for(block in collisionMembers) {
+            if(block.x < player.x - 64) {
+                collisionMembers.remove(block);
+            }
+        }
+
+        for(cactus in cactis) {
+            if(cactus.x < player.x - 64) {
+                cactis.remove(cactus);
+            }
+        }
     }
 
     function set_collisionWall(value:Bool):Bool {
