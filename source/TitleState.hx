@@ -87,6 +87,8 @@ class TitleState extends BetterUIStates {
         terrain = new Terrain();
         terrain.y = FlxG.height + terrain.height;
         terrain.speed = 10;
+        terrain.genCactis = true;
+        terrain.cactusGenMin = 1;
         add(terrain);
 
         river = new River(FlxG.height - 64);

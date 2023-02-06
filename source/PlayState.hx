@@ -146,21 +146,39 @@ class PlayState extends BetterUIStates {
 				pause();
 			}
 
-			for(cactus in terrain.cactis) {
-				if(FlxG.collide(player, cactus)) {
-					truelyDed();
-				}
+			if(score > 500 && terrain.cactusGenMin == 6) {
+				terrain.cactusGenMin = 1;
+			}
+
+			if(touchedCactus(player)) {
+				truelyDed();
 			}
 			
 			ded();
 
 			score = Std.int(-terrain.x * 0.01);
 			scoreTxt.text = "Score: " + score;
+
+			terrain.clean(player);
 		}else {
 			player.gravity = elapsed * 4500 * 64;
 		}
 
 		super.update(elapsed);
+	}
+
+	function touchedCactus(p:Player):Bool {
+		var c:Int = 60;
+
+		for(i in 0...terrain.cactis.length) {
+			if(p.x > terrain.cactis[i].x - c && p.x < terrain.cactis[i].x + c) {
+				if(p.y > terrain.cactis[i].y - c && p.y < terrain.cactis[i].y + c) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	function wallCollision(p:Player):Bool {
@@ -261,6 +279,9 @@ class PlayState extends BetterUIStates {
 			FlxG.save.data.highScore = score;
 			FlxG.save.flush();
 		}
+
+		player.velocity.y = -70;
+		player.acceleration.y = 39.2;
 
 		stopGame = true;
 		openSubState(new GameOverSubstate());

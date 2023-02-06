@@ -31,6 +31,8 @@ class Terrain extends FlxSpriteGroup {
     var genSide:Bool = false;
     var generatedC:Bool = false;
 
+    public var cactusGenMin:UInt = 6;
+
     @:final public var startingVelocity:Float = 500;
     @:final public var startingAcceleration:Float = 20;
 
@@ -60,12 +62,7 @@ class Terrain extends FlxSpriteGroup {
             return;
         }
 
-        if(genDistance > 0) {
-            genDistance--;
-            return;
-        }
-
-        if(genLayersIndex == FlxG.random.int(6, 8) && !generatedC && genCactis) {
+        if(genLayersIndex == FlxG.random.int(cactusGenMin, 8) && !generatedC && genCactis) {
             generatedC = true;
 
             var cactus:FlxSprite = new FlxSprite(x, maxiumHeight - (genHeight * 64) - 64).loadGraphic(AssetPath.image("assets/images/cactus"));
@@ -145,7 +142,7 @@ class Terrain extends FlxSpriteGroup {
 
         for(cactus in cactis) {
             if(cactus.x < player.x - 64) {
-                cactis.remove(cactus);
+                //cactis.remove(cactus);
             }
         }
     }
@@ -185,7 +182,7 @@ class Terrain extends FlxSpriteGroup {
         }
 
         if(blockDistance + x < FlxG.width) {
-            if(!genSide && width + x < FlxG.width) {
+            if(!genSide && width + x < FlxG.width + (genDistance * 64)) {
                 genSide = true;
                 generateSide(blockDistance + (genDistance * 64));
                 blockDistance += 64 + (genDistance * 64);
