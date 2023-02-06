@@ -103,8 +103,9 @@ class PlayState extends BetterUIStates {
 		highScore = new FlxText(20, 20 + scoreTxt.height, "High Score: " + FlxG.save.data.highScore, 16);
 		highScore.scrollFactor.set(0, 0);
 
-		#if !debug
 		add(scoreTxt);
+
+		#if !debug
 		add(highScore);
 		#end
 

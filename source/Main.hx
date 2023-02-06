@@ -40,8 +40,6 @@ class Main extends Sprite
 		game = new FlxGame(0, 0, TitleState, zoom, fps, fps, true, fullscreen);
 		addChild(game);
 
-		#if !debug
 		Lib.current.addChild(new Version());
-		#end
 	}
 }
