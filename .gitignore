@@ -1,3 +1,4 @@
 .DS_STORE
+.haxelib/
 assets/.DS_STORE
 export
