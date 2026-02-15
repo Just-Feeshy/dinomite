@@ -2,7 +2,7 @@
 <project>
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="Dinomite" file="Dinomite" main="Main" version="1.0.0" company="Los Gay Boys" />
+	<app title="Dinomite" file="Dinomite" main="Main" version="1.0.0" company="Los Boys" />
 
 	<!--The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
 		or you can set the actual size of your file manually at "FlxPreloaderBase-onUpdate-bytesTotal"-->
@@ -37,13 +37,8 @@
 	<!-- _______________________________ Libraries ______________________________ -->
 
 	<haxelib name="flixel" version="4.11.0" />
-
-	<!--In case you want to use the addons package-->
-	<haxelib name="flixel-addons" />
-
-	<!--In case you want to use the ui package-->
-	<haxelib name="flixel-ui" />
-	<haxelib name="faxe" if='switch'/>
+	<haxelib name="flixel-addons" version="2.11.0" />
+	<haxelib name="flixel-ui" version="2.5.0" />
 
 	<assets path="assets/music" exclude="*.ogg" if="web"/>
 	<assets path="assets/music" exclude="*.mp3" unless="web"/>

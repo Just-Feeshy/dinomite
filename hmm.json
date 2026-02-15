@@ -1,0 +1,27 @@
+{
+	"dependencies": [
+		{
+			"name": "flixel",
+			"type": "haxelib",
+			"version": "4.11.0"
+		},
+		{
+			"name": "flixel-addons",
+			"type": "haxelib",
+			"version": "2.11.0"
+		},
+		{
+			"name": "flixel-ui",
+			"type": "haxelib",
+			"version": "2.5.0"
+		},
+		{
+			"name": "lime",
+			"type": "haxelib"
+		},
+		{
+			"name": "openfl",
+			"type": "haxelib"
+		}
+	]
+}
