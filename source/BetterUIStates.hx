@@ -11,7 +11,7 @@ class BetterUIStates extends FlxUIState {
     private static var transitionBuilds:Map<String, Class<TransitionBuilder>> = new Map<String, Class<TransitionBuilder>>();
 
     var transOutFinished:Bool = false;
-    
+
     var transInType:String;
 	var transOutType:String;
 
