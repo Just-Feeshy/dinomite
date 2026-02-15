@@ -136,8 +136,8 @@ class PlayState extends BetterUIStates {
 				gravity += (elapsed * 4500 * 64) * 8;
 			}
 
-			if(controls.UP && (jumpForce > -1500 && player.isTouchingGround) && !wallCollided) {
-				jumpForce -= 750;
+			if(controls.UP && (jumpForce > -1200 && player.isTouchingGround) && !wallCollided) {
+				jumpForce -= 600;
 				addJumpForce = true;
 			}else if(addJumpForce) {
 				player.jumpForce = jumpForce;
@@ -181,6 +181,14 @@ class PlayState extends BetterUIStates {
 		persistentDraw = true;
 
 		openSubState(new PauseSubstate());
+	}
+
+	override function onFocusLost():Void {
+		super.onFocusLost();
+
+		if(!stopGame && subState == null) {
+			pause();
+		}
 	}
 
 	function ded():Void {

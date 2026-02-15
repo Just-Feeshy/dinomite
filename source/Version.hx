@@ -9,7 +9,7 @@ import openfl.text.TextFormat;
 * WIP
 */
 class Version extends TextField {
-    public static var version:String = "1.1.1";
+    public static var version:String = "1.0.0-REVISIT";
 
     public function new() {
         super();
@@ -20,7 +20,7 @@ class Version extends TextField {
 
         defaultTextFormat = new TextFormat(FlxAssets.FONT_DEFAULT, 18, 0xFFFFFF);
 
-        width = 150;
+        width = 160;
         height = 70;
 
         #if web

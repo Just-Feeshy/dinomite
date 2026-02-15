@@ -161,9 +161,11 @@ class Terrain extends FlxSpriteGroup {
 			var byBottom = block.y + block.height;
 
 			var overlapsY = pyBottom > byTop && pyTop < byBottom;
-			var overlapsNowX = pxRight >= bxLeft - WALL_SNAP_EPSILON && pxLeft < bxRight + WALL_SNAP_EPSILON;
-			var crossedThisFrameX = bxLeft <= pxRight + WALL_SNAP_EPSILON && (bxLeft + sweepX) >= pxRight - WALL_SNAP_EPSILON;
-			var touchesOrOverlapsX = overlapsNowX || crossedThisFrameX;
+			// Terrain moves left after this check, so sweep the player's X extent forward
+			// by this frame's terrain movement to prevent tunneling at high speed.
+			var sweptRight = pxRight + sweepX + WALL_SNAP_EPSILON;
+			var sweptLeft = pxLeft - WALL_SNAP_EPSILON;
+			var touchesOrOverlapsX = sweptRight >= bxLeft && sweptLeft < bxRight;
 			if(overlapsY && touchesOrOverlapsX) {
 				stopVelocity = true;
 				return true;
@@ -212,7 +214,7 @@ class Terrain extends FlxSpriteGroup {
 		}
 
 		if(!p.isTouchingGround) {
-			gravity += elapsed * 288000;
+			gravity += elapsed * 360000;
 		}
 
 		return {gravity: gravity, ground: p.isTouchingGround};

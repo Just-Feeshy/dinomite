@@ -22,11 +22,7 @@ class TitleState extends BetterUIStates {
     var creditsText:FlxText;
     var playerOptions:OptionGroup;
 
-    #if web
-    var options:Array<String> = ['PLAY', 'CREDITS', 'OPTIONS'];
-    #else
-    var options:Array<String> = ['PLAY', 'CREDITS', 'OPTIONS', 'QUIT'];
-    #end
+    var options:Array<String> = ['PLAY', 'CHOOSE DINO', 'CREDITS', 'OPTIONS'];
 
     var credits:String = "Luke Barberry - Ex Game Director\n\nDiego Fonseca - Programmer\n\nJohn Jensen - Was There\n\n\nTrevor Lentz - Main Game Music\n\nCleyton Kauffman - Game Over Music\n\nFato Shadow - Title Screen Music\n\nOpenGameArt - Game Assets";
     var howToPlay:String = "";
@@ -42,7 +38,7 @@ class TitleState extends BetterUIStates {
     var creditMenu:Bool = false;
 
     public function new() {
-        super("", "void");
+        super("", "fade");
     }
 
     override public function create():Void {
@@ -51,7 +47,7 @@ class TitleState extends BetterUIStates {
         initSave();
         controls.setKeyboardScheme(Solo);
 
-        PlayState.GAME_FADE = "";
+        PlayState.GAME_FADE = "fade";
 
         FlxG.sound.cache(AssetPath.musicString("fato_shadow_-_main_menu"));
 
@@ -105,7 +101,7 @@ class TitleState extends BetterUIStates {
         grpOptions = new FlxTypedSpriteGroup<FlxText>();
 
         for(i in 0...options.length) {
-            var item:FlxText = new FlxText(40, (80 * i) + 360, options[i], 64);
+            var item:FlxText = new FlxText(40, (80 * i) + 320, options[i], 64);
             item.scrollFactor.set(0, 0);
             item.screenCenter(X);
             grpOptions.add(item);
@@ -136,17 +132,40 @@ class TitleState extends BetterUIStates {
     }
 
     function makeTitle():Void {
-        var titleW = new FlxText(0, 0, "Dinomite", 128);
-        titleW.y = -titleW.height - 64;
-        titleW.screenCenter(X);
+        var text = "Dinomite";
+        var size = 128;
+        var amplitude = 11;
+        var spacing = -4;
 
-        var titleB = new FlxText(0, 0, "Dinomite", 128);
-        titleB.color = FlxColor.BLACK;
-        titleB.y = -titleB.height - 48;
-        titleB.screenCenter(X);
+        var letterWidths:Array<Float> = [];
+        var totalWidth:Float = 0;
+        for(i in 0...text.length) {
+            var probe = new FlxText(0, 0, text.charAt(i), size);
+            letterWidths.push(probe.width);
+            totalWidth += probe.width;
+        }
+        totalWidth += spacing * (text.length - 1);
 
-        title.add(titleB);
-        title.add(titleW);
+        var startX = (FlxG.width - totalWidth) * 0.5;
+        var frontBaseY = -size - 64;
+        var shadowBaseY = -size - 48;
+
+        var xCursor = startX;
+        for(i in 0...text.length) {
+            var ch = text.charAt(i);
+            var phase = Math.PI * 0.5 * i;
+            var waveY = Math.abs(Math.sin(phase)) * amplitude;
+
+            var letterShadow = new FlxText(xCursor, shadowBaseY + waveY, ch, size);
+            letterShadow.color = FlxColor.fromRGB(64, 64, 64);
+
+            var letterFront = new FlxText(xCursor, frontBaseY + waveY, ch, size);
+
+            title.add(letterShadow);
+            title.add(letterFront);
+
+            xCursor += letterWidths[i] + spacing;
+        }
     }
 
     function changeSelection(change:Int = 0):Void {
@@ -201,7 +220,7 @@ class TitleState extends BetterUIStates {
                 switch(curSelected) {
                     case 0:
                         FlxG.switchState(new PlayState());
-                    case 1:
+                    case 2:
                         selected = false;
                         creditsText.visible = true;
                         playerOptions.visible = false;
@@ -209,7 +228,7 @@ class TitleState extends BetterUIStates {
                         playerOptions.inUse = false;
                         FlxTween.tween(camOptions, {y: -FlxG.height}, 1, {ease: FlxEase.quadOut});
                         creditMenu = true;
-                    case 2:
+                    case 3:
                         selected = false;
                         creditsText.visible = false;
                         playerOptions.visible = true;
@@ -218,10 +237,6 @@ class TitleState extends BetterUIStates {
                             playerOptions.controlSelector = true;
                         }});
                         creditMenu = true;
-                    case 3:
-                        #if sys
-                        Sys.exit(0);
-                        #end
                 }
             }
 

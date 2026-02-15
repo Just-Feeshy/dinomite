@@ -6,8 +6,7 @@ A game made with HaxeFlixel.
 
 ### Prerequisites
 
-1. **Haxe** - Download and install from [haxe.org](https://haxe.org/download/)
-2. **Git** - Download from [git-scm.com](https://git-scm.com/downloads)
+- **Haxe** - Download and install from [haxe.org](https://haxe.org/download/)
 
 #### Platform-Specific Requirements
 
