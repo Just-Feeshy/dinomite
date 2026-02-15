@@ -126,9 +126,12 @@ class PlayState extends BetterUIStates {
 
 			camFollow.y = player.getMidpoint().y + playerCamOffset;
 			terrain.clearBlocksBeforeX(terrain.collisionMembers, player.x - 64);
-			player.gravity = topCollision(player, elapsed);
 
-			wallCollided = wallCollision(player);
+			var collision = terrain.topCollision(player, gravity, elapsed);
+			gravity = collision.gravity;
+			player.gravity = gravity;
+
+			wallCollided = terrain.wallCollision(player);
 
 			if(controls.DOWN) {
 				gravity += (elapsed * 4500 * 64) * 8;
@@ -151,10 +154,10 @@ class PlayState extends BetterUIStates {
 				terrain.cactusGenMin = 1;
 			}
 
-			if(touchedCactus(player)) {
+			if(terrain.cactusCollision(player)) {
 				truelyDed();
 			}
-			
+
 			ded();
 
 			score = Std.int(-terrain.x * 0.01);
@@ -166,88 +169,6 @@ class PlayState extends BetterUIStates {
 		}
 
 		super.update(elapsed);
-	}
-
-	function touchedCactus(p:Player):Bool {
-		var c:Int = 60;
-
-		for(i in 0...terrain.cactis.length) {
-			if(p.x > terrain.cactis[i].x - c && p.x < terrain.cactis[i].x + c) {
-				if(p.y > terrain.cactis[i].y - c && p.y < terrain.cactis[i].y + c) {
-					return true;
-				}
-			}
-		}
-
-		return false;
-	}
-
-	function wallCollision(p:Player):Bool {
-		var c:Float = 64;
-
-		for(i in 0...terrain.collisionMembers.length) {
-			if(p.x > terrain.collisionMembers[i].x - 65 && p.x < terrain.collisionMembers[i].x + 65) {
-				if(p.y > terrain.collisionMembers[i].y - c && p.y < terrain.collisionMembers[i].y + c) {
-					terrain.stopVelocity = true;
-					p.x = terrain.collisionMembers[i].x - 64;
-
-					return true;
-				}
-			}
-		}
-
-		p.x = 0;
-		terrain.stopVelocity = false;
-		return false;
-	}
-
-	function topCollision(p:Player, elapsed:Float):Float {
-		player.isTouchingGround = false;
-
-		if(gravity <= 0) {
-			gravity = 90000;
-		}
-
-		var minimumHeight:Float = 0;
-		var prevMinimumHeight:Float = 0;
-		var isOnBlock:Bool = false;
-		var prevIsOnBlock:Bool = false;
-
-		for(i in 0...terrain.collisionMembers.length) {
-			if(Math.floor(terrain.collisionMembers[i].x * 0.015625) * 64 == Math.floor(p.x * 0.015625) * 64 || Math.ceil(terrain.collisionMembers[i].x * 0.015625) * 64 == Math.ceil(p.x * 0.015625) * 64) {
-				isOnBlock = true;
-
-				if(minimumHeight > terrain.collisionMembers[i].y) {
-					minimumHeight = terrain.collisionMembers[i].y;
-				}
-			}
-
-			if(Math.floor(terrain.collisionMembers[i].x * 0.015625) * 64 == Math.floor((p.x - 64) * 0.015625) * 64 || Math.ceil(terrain.collisionMembers[i].x * 0.015625) * 64 == Math.ceil((p.x - 64) * 0.015625) * 64) {
-				prevIsOnBlock = true;
-			}
-		}
-
-		if(isOnBlock) {
-			if(prevIsOnBlock && p.y > minimumHeight - 64) {
-				p.y = minimumHeight - 64;
-			}
-
-			if(p.y >= minimumHeight - 64) {
-				p.isTouchingGround = true;
-
-				if(p.gravity != 0) {
-					p.jumpForce = 0;
-				}
-
-				gravity = 0;
-			}
-		}
-
-		if(gravity > 0) {
-			gravity += elapsed * 4500 * 64;
-		}
-
-		return gravity;
 	}
 
 	function start_HelloWorld():Void {

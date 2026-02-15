@@ -7,6 +7,8 @@ import flixel.math.FlxVelocity;
 import flixel.group.FlxSpriteGroup;
 
 class Terrain extends FlxSpriteGroup {
+	private static var BLOCK_SIZE:Int = 64;
+
     @:final public var maxiumHeight:Float = Std.int(FlxG.height * 0.5) + 64;
 
     public var collisionMembers(default, null):Array<FlxSprite> = [];
@@ -65,8 +67,8 @@ class Terrain extends FlxSpriteGroup {
         if(genLayersIndex == FlxG.random.int(cactusGenMin, 8) && !generatedC && genCactis) {
             generatedC = true;
 
-            var cactus:FlxSprite = new FlxSprite(x, maxiumHeight - (genHeight * 64) - 64).loadGraphic(AssetPath.image("assets/images/cactus"));
-            cactus.setGraphicSize(64, 64);
+            var cactus:FlxSprite = new FlxSprite(x, maxiumHeight - (genHeight * BLOCK_SIZE) - BLOCK_SIZE).loadGraphic(AssetPath.image("assets/images/cactus"));
+            cactus.setGraphicSize(BLOCK_SIZE, BLOCK_SIZE);
             cactus.updateHitbox();
             add(cactus);
 
@@ -75,19 +77,19 @@ class Terrain extends FlxSpriteGroup {
 
         var index:UInt = 1;
 
-        var grass:FlxSprite = new FlxSprite(x, maxiumHeight - (genHeight * 64) - 64).loadGraphic(AssetPath.image("assets/images/grass"));
-        grass.setGraphicSize(64, 64);
+        var grass:FlxSprite = new FlxSprite(x, maxiumHeight - (genHeight * BLOCK_SIZE) - BLOCK_SIZE).loadGraphic(AssetPath.image("assets/images/grass"));
+        grass.setGraphicSize(BLOCK_SIZE, BLOCK_SIZE);
         grass.updateHitbox();
         add(grass);
 
-        var floor:FlxSprite = new FlxSprite(x, maxiumHeight - (genHeight * 64)).loadGraphic(AssetPath.image("assets/images/ground1"));
-        floor.setGraphicSize(64, 64);
+        var floor:FlxSprite = new FlxSprite(x, maxiumHeight - (genHeight * BLOCK_SIZE)).loadGraphic(AssetPath.image("assets/images/ground1"));
+        floor.setGraphicSize(BLOCK_SIZE, BLOCK_SIZE);
         floor.updateHitbox();
         addBlock(floor);
 
         while(index < genHeight) {
-            var ground:FlxSprite = new FlxSprite(x, ((index) * 64) + maxiumHeight - (genHeight * 64)).loadGraphic(AssetPath.image("assets/images/ground2"));
-		    ground.setGraphicSize(64, 64);
+            var ground:FlxSprite = new FlxSprite(x, ((index) * BLOCK_SIZE) + maxiumHeight - (genHeight * BLOCK_SIZE)).loadGraphic(AssetPath.image("assets/images/ground2"));
+		    ground.setGraphicSize(BLOCK_SIZE, BLOCK_SIZE);
 		    ground.updateHitbox();
 		    addBlock(ground);
 
@@ -135,17 +137,110 @@ class Terrain extends FlxSpriteGroup {
 
     public function clean(player:Player):Void {
         for(block in collisionMembers) {
-            if(block.x < player.x - 64) {
+            if(block.x < player.x - BLOCK_SIZE) {
                 collisionMembers.remove(block);
             }
         }
 
         for(cactus in cactis) {
-            if(cactus.x < player.x - 64) {
-                //cactis.remove(cactus);
+            if(cactus.x < player.x - BLOCK_SIZE) {
+                cactis.remove(cactus);
             }
         }
     }
+
+	public function wallCollision(p:Player):Bool {
+		var px = p.x;
+		var py = p.y;
+
+		for (block in collisionMembers) {
+			var bx = block.x;
+			if (px > bx - 65 && px < bx + 65) {
+				var by = block.y;
+				if (py > by - 64 && py < by + 64) {
+					stopVelocity = true;
+					p.x = bx - 64;
+					return true;
+				}
+			}
+		}
+
+		p.x = 0;
+		stopVelocity = false;
+		return false;
+	}
+
+	public function topCollision(p:Player, gravity:Float, elapsed:Float):{gravity:Float, ground:Bool} {
+		p.isTouchingGround = false;
+
+		if (gravity <= 0) {
+			gravity = 90000;
+		}
+
+		var px = p.x;
+		var py = p.y;
+		var pxCol = Std.int(px) >> 6 << 6; // Divide by 64, multiply by 64
+		var prevCol = Std.int(px - 64) >> 6 << 6;
+		var minimumHeight:Float = 0;
+		var isOnBlock = false;
+		var prevIsOnBlock = false;
+
+		for (block in collisionMembers) {
+			var bx = block.x;
+			var bxFloor = Std.int(bx) >> 6 << 6;
+			var bxCeil = (Std.int(bx) + 63) >> 6 << 6;
+
+			if (bxFloor == pxCol || bxCeil == pxCol) {
+				isOnBlock = true;
+				if (minimumHeight > block.y) {
+					minimumHeight = block.y;
+				}
+			}
+
+			if (bxFloor == prevCol || bxCeil == prevCol) {
+				prevIsOnBlock = true;
+			}
+		}
+
+		if (isOnBlock) {
+			var minY64 = minimumHeight - 64;
+			if (prevIsOnBlock && py > minY64) {
+				p.y = minY64;
+			}
+
+			if (py >= minY64) {
+				p.isTouchingGround = true;
+				if (p.gravity != 0) {
+					p.jumpForce = 0;
+				}
+				gravity = 0;
+			}
+		}
+
+		if (gravity > 0) {
+			gravity += elapsed * 288000; // Pre-computed 4500 * 64
+		}
+
+		return {gravity: gravity, ground: p.isTouchingGround};
+	}
+
+	public function cactusCollision(p:Player):Bool {
+		var px = p.x;
+		var py = p.y;
+
+		for (cactus in cactis) {
+			var cx = cactus.x;
+			if (px > cx - 60 && px < cx + 60) {
+				var cy = cactus.y;
+				if (py > cy - 60 && py < cy + 60) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
 
     function set_collisionWall(value:Bool):Bool {
         if(!value) {
