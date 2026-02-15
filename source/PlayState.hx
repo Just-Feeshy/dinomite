@@ -125,13 +125,12 @@ class PlayState extends BetterUIStates {
 			river.getX = terrain.x;
 
 			camFollow.y = player.getMidpoint().y + playerCamOffset;
-			terrain.clearBlocksBeforeX(terrain.collisionMembers, player.x - 64);
 
 			var collision = terrain.topCollision(player, gravity, elapsed);
 			gravity = collision.gravity;
 			player.gravity = gravity;
 
-			wallCollided = terrain.wallCollision(player);
+			wallCollided = terrain.wallCollision(player, elapsed);
 
 			if(controls.DOWN) {
 				gravity += (elapsed * 4500 * 64) * 8;

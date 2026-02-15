@@ -12,6 +12,7 @@ class Terrain extends FlxSpriteGroup {
     @:final public var maxiumHeight:Float = Std.int(FlxG.height * 0.5) + 64;
 
     public var collisionMembers(default, null):Array<FlxSprite> = [];
+	public var groundMembers(default, null):Array<FlxSprite> = [];
     public var floorMembers(default, null):Array<FlxSprite> = [];
     public var cactis(default, null):Array<FlxSprite> = [];
 
@@ -41,6 +42,8 @@ class Terrain extends FlxSpriteGroup {
     public var backwardsVelocity(default, null):FlxPoint;
 
     var blockDistance:Float = 0;
+
+	private static inline var WALL_SNAP_EPSILON:Float = 6;
 
     public function new() {
         super();
@@ -106,9 +109,13 @@ class Terrain extends FlxSpriteGroup {
     }
 
     public function clearBlocksBeforeX(blocks:Array<FlxSprite>, x:Float, destroy:Bool = false):Void {
+        if(blocks.length == 0) {
+            return;
+        }
+
         blocks.sort((a, b) -> Std.int(a.x - b.x));
 
-        while(Std.int(blocks[0].x) <= x) {
+        while(blocks.length > 0 && Std.int(blocks[0].x) <= x) {
             if(destroy) {
                 blocks[0].destroy();
                 remove(blocks[0], true);
@@ -136,36 +143,33 @@ class Terrain extends FlxSpriteGroup {
     }
 
     public function clean(player:Player):Void {
-        for(block in collisionMembers) {
-            if(block.x < player.x - BLOCK_SIZE) {
-                collisionMembers.remove(block);
-            }
-        }
+        clearBlocksBeforeX(collisionMembers, player.x - BLOCK_SIZE);
+        clearBlocksBeforeX(cactis, player.x - BLOCK_SIZE);
+	}
 
-        for(cactus in cactis) {
-            if(cactus.x < player.x - BLOCK_SIZE) {
-                cactis.remove(cactus);
-            }
-        }
-    }
+	public function wallCollision(p:Player, elapsed:Float):Bool {
+		var pxRight = p.x + p.width;
+		var pxLeft = p.x;
+		var pyTop = p.y;
+		var pyBottom = p.y + p.height;
+		var sweepX = Math.abs(backwardsVelocity.x * elapsed);
 
-	public function wallCollision(p:Player):Bool {
-		var px = p.x;
-		var py = p.y;
+		for(block in collisionMembers) {
+			var bxLeft = block.x;
+			var bxRight = block.x + block.width;
+			var byTop = block.y;
+			var byBottom = block.y + block.height;
 
-		for (block in collisionMembers) {
-			var bx = block.x;
-			if (px > bx - 65 && px < bx + 65) {
-				var by = block.y;
-				if (py > by - 64 && py < by + 64) {
-					stopVelocity = true;
-					p.x = bx - 64;
-					return true;
-				}
+			var overlapsY = pyBottom > byTop && pyTop < byBottom;
+			var overlapsNowX = pxRight >= bxLeft - WALL_SNAP_EPSILON && pxLeft < bxRight + WALL_SNAP_EPSILON;
+			var crossedThisFrameX = bxLeft <= pxRight + WALL_SNAP_EPSILON && (bxLeft + sweepX) >= pxRight - WALL_SNAP_EPSILON;
+			var touchesOrOverlapsX = overlapsNowX || crossedThisFrameX;
+			if(overlapsY && touchesOrOverlapsX) {
+				stopVelocity = true;
+				return true;
 			}
 		}
 
-		p.x = 0;
 		stopVelocity = false;
 		return false;
 	}
@@ -173,68 +177,60 @@ class Terrain extends FlxSpriteGroup {
 	public function topCollision(p:Player, gravity:Float, elapsed:Float):{gravity:Float, ground:Bool} {
 		p.isTouchingGround = false;
 
-		if (gravity <= 0) {
-			gravity = 90000;
+		if(gravity <= 0) {
+			gravity = 0;
 		}
 
-		var px = p.x;
-		var py = p.y;
-		var pxCol = Std.int(px) >> 6 << 6; // Divide by 64, multiply by 64
-		var prevCol = Std.int(px - 64) >> 6 << 6;
-		var minimumHeight:Float = 0;
-		var isOnBlock = false;
-		var prevIsOnBlock = false;
+		var pxLeft = p.x;
+		var pxRight = p.x + p.width;
+		var pyBottom = p.y + p.height;
+		var bestGroundTop = Math.POSITIVE_INFINITY;
 
-		for (block in collisionMembers) {
-			var bx = block.x;
-			var bxFloor = Std.int(bx) >> 6 << 6;
-			var bxCeil = (Std.int(bx) + 63) >> 6 << 6;
-
-			if (bxFloor == pxCol || bxCeil == pxCol) {
-				isOnBlock = true;
-				if (minimumHeight > block.y) {
-					minimumHeight = block.y;
-				}
+		for(block in collisionMembers) {
+			var bxLeft = block.x;
+			var bxRight = block.x + block.width;
+			var overlapsX = pxRight > bxLeft && pxLeft < bxRight;
+			if(!overlapsX) {
+				continue;
 			}
 
-			if (bxFloor == prevCol || bxCeil == prevCol) {
-				prevIsOnBlock = true;
+			if(block.y < bestGroundTop) {
+				bestGroundTop = block.y;
 			}
 		}
 
-		if (isOnBlock) {
-			var minY64 = minimumHeight - 64;
-			if (prevIsOnBlock && py > minY64) {
-				p.y = minY64;
-			}
-
-			if (py >= minY64) {
+		if(bestGroundTop != Math.POSITIVE_INFINITY) {
+			var standY = bestGroundTop - p.height;
+			var fallingOrOnGround = gravity >= 0;
+			var closeToSurface = pyBottom >= bestGroundTop - WALL_SNAP_EPSILON;
+			if(fallingOrOnGround && closeToSurface) {
+				p.y = standY;
 				p.isTouchingGround = true;
-				if (p.gravity != 0) {
-					p.jumpForce = 0;
-				}
+				p.jumpForce = 0;
 				gravity = 0;
 			}
 		}
 
-		if (gravity > 0) {
-			gravity += elapsed * 288000; // Pre-computed 4500 * 64
+		if(!p.isTouchingGround) {
+			gravity += elapsed * 288000;
 		}
 
 		return {gravity: gravity, ground: p.isTouchingGround};
 	}
 
 	public function cactusCollision(p:Player):Bool {
-		var px = p.x;
-		var py = p.y;
+		var pxLeft = p.x;
+		var pxRight = p.x + p.width;
+		var pyTop = p.y;
+		var pyBottom = p.y + p.height;
 
-		for (cactus in cactis) {
-			var cx = cactus.x;
-			if (px > cx - 60 && px < cx + 60) {
-				var cy = cactus.y;
-				if (py > cy - 60 && py < cy + 60) {
-					return true;
-				}
+		for(cactus in cactis) {
+			var cxLeft = cactus.x;
+			var cxRight = cactus.x + cactus.width;
+			var cyTop = cactus.y;
+			var cyBottom = cactus.y + cactus.height;
+			if(pxRight > cxLeft && pxLeft < cxRight && pyBottom > cyTop && pyTop < cyBottom) {
+				return true;
 			}
 		}
 
