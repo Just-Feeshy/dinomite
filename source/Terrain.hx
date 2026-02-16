@@ -43,7 +43,7 @@ class Terrain extends FlxSpriteGroup {
 
     var blockDistance:Float = 0;
 
-	private static inline var WALL_SNAP_EPSILON:Float = 6;
+	private static inline var WALL_SNAP_EPSILON:Float = 7;
 
     public function new() {
         super();

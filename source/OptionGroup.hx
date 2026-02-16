@@ -32,6 +32,12 @@ class OptionGroup extends FlxTypedSpriteGroup<FlxText> {
         super();
 
         createSection("Player Settings", ['Jump: ${FlxKey.toStringMap.get(FlxG.save.data.customKeys.UP)}', 'Go Down: ${FlxKey.toStringMap.get(FlxG.save.data.customKeys.DOWN)}', 'Pause: ${FlxKey.toStringMap.get(FlxG.save.data.customKeys.PAUSE)}']);
+        createSection("UI Settings", [
+            'UI Up: ${FlxKey.toStringMap.get(FlxG.save.data.customKeys.UP_UI)}',
+            'UI Down: ${FlxKey.toStringMap.get(FlxG.save.data.customKeys.DOWN_UI)}',
+            'UI Left: ${FlxKey.toStringMap.get(FlxG.save.data.customKeys.LEFT_UI)}',
+            'UI Right: ${FlxKey.toStringMap.get(FlxG.save.data.customKeys.RIGHT_UI)}'
+        ]);
 
         arrow = new FlxText(0, options[0].y, "<", optionSize);
         arrow.x = options[0].x + options[0].width + arrow.width + 16;
@@ -62,7 +68,7 @@ class OptionGroup extends FlxTypedSpriteGroup<FlxText> {
 		if (curSelected >= options.length)
 			curSelected = 0;
 
-     
+
         arrow.y = options[curSelected].y;
         arrow.x = options[curSelected].x + options[curSelected].width + arrow.width + 16;
     }
@@ -76,7 +82,7 @@ class OptionGroup extends FlxTypedSpriteGroup<FlxText> {
 
                     selected = false;
                     options[curSelected].text = options[curSelected].text.split(":")[0] + ": " + keyString;
-                    arrow.x = options[0].x + options[0].width + arrow.width + 16;
+                    arrow.x = options[curSelected].x + options[curSelected].width + arrow.width + 16;
                     options[curSelected].color = FlxColor.WHITE;
 
                     switch(curSelected) {
@@ -86,6 +92,14 @@ class OptionGroup extends FlxTypedSpriteGroup<FlxText> {
                             FlxG.save.data.customKeys.DOWN = keyPressed;
                         case 2:
                             FlxG.save.data.customKeys.PAUSE = keyPressed;
+                        case 3:
+                            FlxG.save.data.customKeys.UP_UI = keyPressed;
+                        case 4:
+                            FlxG.save.data.customKeys.DOWN_UI = keyPressed;
+                        case 5:
+                            FlxG.save.data.customKeys.LEFT_UI = keyPressed;
+                        case 6:
+                            FlxG.save.data.customKeys.RIGHT_UI = keyPressed;
                     }
 
                     controls.setKeyboardScheme(Solo);
@@ -100,11 +114,11 @@ class OptionGroup extends FlxTypedSpriteGroup<FlxText> {
         }
 
         if(!selected) {
-            if(FlxG.keys.justPressed.UP || FlxG.keys.justPressed.W) {
+            if(controls.UP_UI) {
                 changeSelection(-1);
             }
 
-            if(FlxG.keys.justPressed.DOWN || FlxG.keys.justPressed.S) {
+            if(controls.DOWN_UI) {
                 changeSelection(1);
             }
 

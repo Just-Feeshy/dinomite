@@ -44,7 +44,7 @@ class FeshCamera extends FlxCamera {
     public function setTrashFilters(trashFilters:Array<BitmapFilter>) {
         wastefulFilters = trashFilters;
     }
-    
+
     public function lockFilter(filters:BitmapFilter):Void {
         lockedFilters.push(filters);
     }

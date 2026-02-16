@@ -23,7 +23,7 @@ class PlayState extends BetterUIStates {
 	private var terrain:Terrain;
 	private var river:River;
 
-	private var scoreTxt:FlxText; 
+	private var scoreTxt:FlxText;
 	private var highScore:FlxText;
 
 	private var gravity:Float = 100000;
@@ -38,8 +38,6 @@ class PlayState extends BetterUIStates {
 	private var stopGame(default, set):Bool = false;
 
 	@:final private var playerCamOffset:Int = 128;
-
-	private var colorModSprites:Array<FlxSprite>;
 
 	public static var GAME_FADE = "tile";
 
@@ -109,14 +107,6 @@ class PlayState extends BetterUIStates {
 		add(highScore);
 		#end
 
-		colorModSprites = [
-			player,
-			terrain,
-			riverBottom,
-			river,
-			moon,
-		];
-
 		super.create();
 	}
 
@@ -168,12 +158,6 @@ class PlayState extends BetterUIStates {
 		}
 
 		super.update(elapsed);
-	}
-
-	function start_HelloWorld():Void {
-		var helloWorld:FlxText = new FlxText("Hello World", 32);
-		helloWorld.screenCenter();
-		add(helloWorld);
 	}
 
 	function pause():Void {

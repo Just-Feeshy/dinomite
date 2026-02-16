@@ -34,8 +34,9 @@ class TitleState extends BetterUIStates {
     var camBackground:FlxCamera;
 
     var curSelected:Int = 0;
-    var selected:Bool = false;
     var creditMenu:Bool = false;
+
+    public var selected:Bool = false;
 
     public function new() {
         super("", "fade");
@@ -43,6 +44,9 @@ class TitleState extends BetterUIStates {
 
     override public function create():Void {
         Mouse.hide();
+
+        persistentUpdate = true;
+        persistentDraw = true;
 
         initSave();
         controls.setKeyboardScheme(Solo);
@@ -71,6 +75,12 @@ class TitleState extends BetterUIStates {
         camOptions.bgColor.alpha = 0;
         camCredits.bgColor.alpha = 0;
         camBackground.bgColor.alpha = 0;
+        camOptions.antialiasing = false;
+        camCredits.antialiasing = false;
+        camBackground.antialiasing = false;
+        camOptions.pixelPerfectRender = true;
+        camCredits.pixelPerfectRender = true;
+        camBackground.pixelPerfectRender = true;
 
         var moon:FlxSprite = new FlxSprite(0, 30).loadGraphic(AssetPath.image("assets/images/moon"));
 		moon.scale.x *= 2;
@@ -78,6 +88,7 @@ class TitleState extends BetterUIStates {
 		moon.updateHitbox();
 		moon.x = FlxG.width - moon.width - 90;
 		moon.scrollFactor.set(0.1, 0.1);
+        crispSprite(moon);
 		add(moon);
 
         terrain = new Terrain();
@@ -92,9 +103,11 @@ class TitleState extends BetterUIStates {
 
         var riverBottom:FlxSprite = new FlxSprite(0, river.y + 128).makeGraphic(FlxG.width, Std.int(FlxG.height * 0.75), 0xff005784);
 		riverBottom.scrollFactor.set(0, 1);
+        crispSprite(riverBottom);
         add(riverBottom);
 
         title = new FlxTypedSpriteGroup<FlxText>();
+        title.pixelPerfectRender = true;
         makeTitle();
         add(title);
 
@@ -104,15 +117,18 @@ class TitleState extends BetterUIStates {
             var item:FlxText = new FlxText(40, (80 * i) + 320, options[i], 64);
             item.scrollFactor.set(0, 0);
             item.screenCenter(X);
+            crispText(item);
             grpOptions.add(item);
         }
 
+        grpOptions.pixelPerfectRender = true;
         add(grpOptions);
 
         playerOptions = new OptionGroup();
         add(playerOptions);
 
         creditsText = new FlxText(40, 40, credits, 32);
+        crispText(creditsText);
         add(creditsText);
 
         FlxTween.tween(terrain, {y: 772}, 1, {ease: FlxEase.quadOut});
@@ -158,14 +174,26 @@ class TitleState extends BetterUIStates {
 
             var letterShadow = new FlxText(xCursor, shadowBaseY + waveY, ch, size);
             letterShadow.color = FlxColor.fromRGB(64, 64, 64);
+            crispText(letterShadow);
 
             var letterFront = new FlxText(xCursor, frontBaseY + waveY, ch, size);
+            crispText(letterFront);
 
             title.add(letterShadow);
             title.add(letterFront);
 
             xCursor += letterWidths[i] + spacing;
         }
+    }
+
+    inline function crispText(text:FlxText):Void {
+        text.antialiasing = false;
+        text.pixelPerfectRender = true;
+    }
+
+    inline function crispSprite(sprite:FlxSprite):Void {
+        sprite.antialiasing = false;
+        sprite.pixelPerfectRender = true;
     }
 
     function changeSelection(change:Int = 0):Void {
@@ -196,8 +224,17 @@ class TitleState extends BetterUIStates {
             FlxG.save.data.customKeys = {
                 UP: FlxKey.W,
                 DOWN: FlxKey.S,
+                UP_UI: FlxKey.W,
+                DOWN_UI: FlxKey.S,
+                LEFT_UI: FlxKey.A,
+                RIGHT_UI: FlxKey.D,
                 PAUSE: FlxKey.ENTER,
             };
+        } else {
+            if(FlxG.save.data.customKeys.UP_UI == null) FlxG.save.data.customKeys.UP_UI = FlxKey.W;
+            if(FlxG.save.data.customKeys.DOWN_UI == null) FlxG.save.data.customKeys.DOWN_UI = FlxKey.S;
+            if(FlxG.save.data.customKeys.LEFT_UI == null) FlxG.save.data.customKeys.LEFT_UI = FlxKey.A;
+            if(FlxG.save.data.customKeys.RIGHT_UI == null) FlxG.save.data.customKeys.RIGHT_UI = FlxKey.D;
         }
     }
 
@@ -216,15 +253,25 @@ class TitleState extends BetterUIStates {
 
             if(controls.ACCEPT) {
                 selected = true;
+                playerOptions.controlSelector = false;
 
                 switch(curSelected) {
                     case 0:
                         FlxG.switchState(new PlayState());
+					case 1:
+                        selected = true;
+                        creditsText.visible = false;
+                        playerOptions.visible = false;
+                        playerOptions.inUse = false;
+                        var dinoSelection = new DinoSelection(this);
+                        dinoSelection.closeCallback = function() {
+                            selected = false;
+                        };
+						openSubState(dinoSelection);
                     case 2:
                         selected = false;
                         creditsText.visible = true;
                         playerOptions.visible = false;
-                        playerOptions.controlSelector = false;
                         playerOptions.inUse = false;
                         FlxTween.tween(camOptions, {y: -FlxG.height}, 1, {ease: FlxEase.quadOut});
                         creditMenu = true;
