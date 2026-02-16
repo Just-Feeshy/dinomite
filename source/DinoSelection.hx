@@ -25,7 +25,7 @@ class DinoSelection extends FlxUISubState {
 	var selectionCamera:FlxCamera;
 	var selectedScreenBg:FlxSprite;
 	var selectedGroup:FlxSpriteGroup;
-	var selectedItems:Array<DinoSelect> = [];
+	var selectedItems:Array<FlxSprite> = [];
 	var selectedItemCenters:Array<{x:Float, y:Float}> = [];
 	var curSelectedItem:Int = 0;
 	var selectedBaseY:Float = 0;
@@ -82,10 +82,13 @@ class DinoSelection extends FlxUISubState {
 
 		var centerX = FlxG.width * 0.5;
 		var startX = centerX - selectedSpacing;
-		var totalItems = 3;
+		var colors = [FlxColor.LIME, FlxColor.CYAN, FlxColor.YELLOW];
 
-		for (i in 0...totalItems) {
-			var item = new DinoSelect(0, 0, 192);
+		for (i in 0...colors.length) {
+			var item = new FlxSprite().makeGraphic(192, 192, colors[i]);
+			item.scrollFactor.set(0, 0);
+			item.antialiasing = false;
+			item.origin.set(item.frameWidth * 0.5, item.frameHeight * 0.5);
 
 			var itemCenterX = startX + (selectedSpacing * i);
 			var itemCenterY = selectedBaseY;
