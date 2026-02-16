@@ -23,7 +23,6 @@ class DinoSelection extends FlxUISubState {
 	var shadowOverlay:FlxSprite;
 	var shadowGradient:BitmapData;
 	var selectionCamera:FlxCamera;
-	var selectedScreenBg:FlxSprite;
 	var selectedGroup:FlxSpriteGroup;
 	var selectedItems:Array<FlxSprite> = [];
 	var selectedItemCenters:Array<{x:Float, y:Float}> = [];
@@ -33,6 +32,7 @@ class DinoSelection extends FlxUISubState {
 	var titleGroup:FlxSpriteGroup;
 	var selectedHint:FlxText;
 	var showingSelectedScreen:Bool = false;
+	var isClosing:Bool = false;
 
 	final controls:Controls = new Controls('player1', Solo);
 	final titleState:TitleState;
@@ -54,10 +54,6 @@ class DinoSelection extends FlxUISubState {
 		shadowOverlay.setGraphicSize(FlxG.width, FlxG.height);
 		shadowOverlay.updateHitbox();
 		shadowOverlay.alpha = 0;
-
-		selectedScreenBg = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, 0xCC000000);
-		selectedScreenBg.scrollFactor.set(0, 0);
-		selectedScreenBg.alpha = 0;
 	}
 
 	override public function create():Void {
@@ -82,12 +78,14 @@ class DinoSelection extends FlxUISubState {
 
 		var centerX = FlxG.width * 0.5;
 		var startX = centerX - selectedSpacing;
-		var colors = [FlxColor.LIME, FlxColor.CYAN, FlxColor.YELLOW];
+		var dinoBitmaps = [
+			AssetPath.image("assets/images/dumb-dino1"),
+			AssetPath.image("assets/images/dumb-dino2"),
+			AssetPath.image("assets/images/dumb-dino3")
+		];
 
-		for (i in 0...colors.length) {
-			var item = new FlxSprite().makeGraphic(192, 192, colors[i]);
-			item.scrollFactor.set(0, 0);
-			item.antialiasing = false;
+		for (i in 0...dinoBitmaps.length) {
+			var item = new DinoSelect(dinoBitmaps[i]);
 			item.origin.set(item.frameWidth * 0.5, item.frameHeight * 0.5);
 
 			var itemCenterX = startX + (selectedSpacing * i);
@@ -102,7 +100,6 @@ class DinoSelection extends FlxUISubState {
 
 		add(shadowOverlay);
 		add(selectedHint);
-		add(selectedScreenBg);
 		add(selectedGroup);
 		add(titleGroup);
 
@@ -188,7 +185,12 @@ class DinoSelection extends FlxUISubState {
 
 	override public function update(elapsed:Float):Void {
 		if (controls.BACK) {
-			close();
+			startCloseTransition();
+			super.update(elapsed);
+			return;
+		}
+
+		if (isClosing) {
 			super.update(elapsed);
 			return;
 		}
@@ -214,7 +216,6 @@ class DinoSelection extends FlxUISubState {
 
 	function showSelectedScreen():Void {
 		showingSelectedScreen = true;
-		selectedScreenBg.visible = true;
 		selectedGroup.visible = true;
 		titleGroup.visible = true;
 		selectedHint.visible = false;
@@ -222,10 +223,24 @@ class DinoSelection extends FlxUISubState {
 
 	function hideSelectedScreen():Void {
 		showingSelectedScreen = false;
-		selectedScreenBg.visible = false;
 		selectedGroup.visible = false;
 		titleGroup.visible = false;
 		selectedHint.visible = true;
+	}
+
+	function startCloseTransition():Void {
+		if (isClosing) {
+			return;
+		}
+
+		isClosing = true;
+		FlxTween.cancelTweensOf(this);
+		FlxTween.tween(this, {transition: 0}, 0.35, {
+			ease: FlxEase.quadOut,
+			onComplete: function(_:FlxTween) {
+				close();
+			}
+		});
 	}
 
 	function changeSelectedItem(change:Int, instant:Bool = false):Void {
@@ -239,7 +254,7 @@ class DinoSelection extends FlxUISubState {
 
 		for (i in 0...selectedItems.length) {
 			var isCurrent = i == curSelectedItem;
-			var targetScale = isCurrent ? 1.35 : 1.0;
+			var targetScale = isCurrent ? 8.1 : 6.0;
 			var targetAlpha = isCurrent ? 1.0 : 0.55;
 			selectedItems[i].color = isCurrent ? FlxColor.WHITE : FlxColor.fromRGB(170, 170, 170);
 			tweenItemScale(i, targetScale, instant);
@@ -335,7 +350,6 @@ class DinoSelection extends FlxUISubState {
 		}
 
 		shadowOverlay = FlxDestroyUtil.destroy(shadowOverlay);
-		selectedScreenBg = FlxDestroyUtil.destroy(selectedScreenBg);
 		selectedGroup = FlxDestroyUtil.destroy(selectedGroup);
 		titleGroup = FlxDestroyUtil.destroy(titleGroup);
 		selectedHint = FlxDestroyUtil.destroy(selectedHint);
@@ -350,17 +364,16 @@ class DinoSelection extends FlxUISubState {
 		if (titleGroup != null) {
 			titleGroup.y = FlxMath.lerp(-TOP_TITLE_PLACEMENT, selectedBaseY - 260, easedBounce);
 		}
+
 		if (shadowOverlay != null) {
 			shadowOverlay.alpha = easedExpo;
-		}
-		if (selectedScreenBg != null) {
-			selectedScreenBg.alpha = easedExpo;
 		}
 
 		if (selectionCamera != null) {
 			selectionCamera.zoom = FlxMath.lerp(0, 1, easedBack);
 		}
 
+		titleState.camOptions.y = FlxMath.lerp(0, -FlxG.height, FlxEase.quadOut(clamped));
 		return transition = clamped;
 	}
 }

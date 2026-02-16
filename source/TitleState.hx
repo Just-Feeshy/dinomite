@@ -29,13 +29,13 @@ class TitleState extends BetterUIStates {
 
     var tweened:Bool = false;
 
-    var camOptions:FlxCamera;
     var camCredits:FlxCamera;
     var camBackground:FlxCamera;
 
     var curSelected:Int = 0;
     var creditMenu:Bool = false;
 
+    public var camOptions:FlxCamera;
     public var selected:Bool = false;
 
     public function new() {
@@ -131,7 +131,7 @@ class TitleState extends BetterUIStates {
         crispText(creditsText);
         add(creditsText);
 
-        FlxTween.tween(terrain, {y: 772}, 1, {ease: FlxEase.quadOut});
+        FlxTween.tween(terrain, {y: 386}, 1, {ease: FlxEase.quadOut});
         FlxTween.tween(title, {y: FlxG.height * 0.4}, 1, {ease: FlxEase.quadOut});
 
         title.cameras = [camOptions];

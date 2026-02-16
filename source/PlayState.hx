@@ -126,7 +126,7 @@ class PlayState extends BetterUIStates {
 				gravity += (elapsed * 4500 * 64) * 8;
 			}
 
-			if(controls.UP && (jumpForce > -1200 && player.isTouchingGround) && !wallCollided) {
+			if(controls.UP && (jumpForce > -800 && player.isTouchingGround)) {
 				jumpForce -= 600;
 				addJumpForce = true;
 			}else if(addJumpForce) {

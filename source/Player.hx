@@ -15,12 +15,10 @@ class Player extends FlxSprite {
     public function new(x:Float = 0, y:Float = 0) {
         super(x, y);
 
-        loadGraphic(AssetPath.image("assets/images/dumb-dino1"), true, 16, 16);
+        loadGraphic(AssetPath.image("assets/images/dumb-dino2"), true, 16, 16);
         animation.add("idle", [0], 0, true);
         animation.add("walk", [1, 2], 2, true);
         animation.play("walk");
-
-        //clipRect = new FlxRect(clipRight, 0, width + clipRight, height);
     }
 
     override function update(elapsed:Float):Void {
