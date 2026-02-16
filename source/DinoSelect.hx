@@ -1,16 +1,18 @@
 package;
 
 import flixel.FlxSprite;
-import flixel.graphics.FlxGraphic;
 import openfl.display.BitmapData;
+import openfl.utils.Assets as OpenFlAssets;
+import openfl.utils.AssetType;
 
 class DinoSelect extends FlxSprite {
 	static var processedSheets:Map<String, BitmapData> = [];
 
-	public function new(bitmap:FlxGraphic, x:Float = 0, y:Float = 0) {
+	public function new(imagePath:String, x:Float = 0, y:Float = 0) {
 		super(x, y);
 
-		loadGraphic(getProcessedSheet(bitmap), true, 22, 22);
+		// Use a clone so each sprite has independent bitmap lifetime.
+		loadGraphic(getProcessedSheet(imagePath).clone(), true, 22, 22);
 		animation.add("idle", [0], 0, true);
 		animation.add("walk", [1, 2], 2, true);
 		animation.play("walk");
@@ -20,13 +22,16 @@ class DinoSelect extends FlxSprite {
 		pixelPerfectRender = true;
 	}
 
-	static function getProcessedSheet(bitmap:FlxGraphic):BitmapData {
-		var key = bitmap.key != null ? bitmap.key : "dino_default";
-		if (processedSheets.exists(key)) {
-			return processedSheets.get(key);
+	static function getProcessedSheet(imagePath:String):BitmapData {
+		if (processedSheets.exists(imagePath)) {
+			var cached = processedSheets.get(imagePath);
+			if (cached != null && cached.width > 0 && cached.height > 0) {
+				return cached;
+			}
+			processedSheets.remove(imagePath);
 		}
 
-		var source = bitmap.bitmap;
+		var source = getSourceBitmap(imagePath);
 		var srcFrameW = 16;
 		var srcFrameH = 16;
 		var dstFrameW = 22;
@@ -81,7 +86,28 @@ class DinoSelect extends FlxSprite {
 			}
 		}
 
-		processedSheets.set(key, output);
+		processedSheets.set(imagePath, output);
 		return output;
+	}
+
+	static function getSourceBitmap(imagePath:String):BitmapData {
+		var openflPath = imagePath + ".png";
+		if (OpenFlAssets.exists(openflPath, AssetType.IMAGE)) {
+			var assetBitmap = OpenFlAssets.getBitmapData(openflPath, false);
+			if (assetBitmap != null) {
+				return assetBitmap;
+			}
+		}
+
+		var graphic = AssetPath.image(imagePath);
+		if (graphic != null) {
+			graphic.persist = true;
+			graphic.destroyOnNoUse = false;
+			if (graphic.bitmap != null) {
+				return graphic.bitmap;
+			}
+		}
+
+		return new BitmapData(48, 16, true, 0xFFFF00FF);
 	}
 }

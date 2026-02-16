@@ -78,14 +78,14 @@ class DinoSelection extends FlxUISubState {
 
 		var centerX = FlxG.width * 0.5;
 		var startX = centerX - selectedSpacing;
-		var dinoBitmaps = [
-			AssetPath.image("assets/images/dumb-dino1"),
-			AssetPath.image("assets/images/dumb-dino2"),
-			AssetPath.image("assets/images/dumb-dino3")
+		var dinoPaths = [
+			"assets/images/dumb-dino1",
+			"assets/images/dumb-dino2",
+			"assets/images/dumb-dino3"
 		];
 
-		for (i in 0...dinoBitmaps.length) {
-			var item = new DinoSelect(dinoBitmaps[i]);
+		for (i in 0...dinoPaths.length) {
+			var item = new DinoSelect(dinoPaths[i]);
 			item.origin.set(item.frameWidth * 0.5, item.frameHeight * 0.5);
 
 			var itemCenterX = startX + (selectedSpacing * i);
