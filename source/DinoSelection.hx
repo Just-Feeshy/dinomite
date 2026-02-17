@@ -24,13 +24,15 @@ class DinoSelection extends FlxUISubState {
 	var shadowGradient:BitmapData;
 	var selectionCamera:FlxCamera;
 	var selectedGroup:FlxSpriteGroup;
-	var selectedItems:Array<FlxSprite> = [];
+	var selectedItems:Array<DinoSelect> = [];
 	var selectedItemCenters:Array<{x:Float, y:Float}> = [];
+	var dinosaurs:Array<Dinosaur> = [];
 	var curSelectedItem:Int = 0;
+	var acceptedSelectedItem:Int = -1;
 	var selectedBaseY:Float = 0;
 	var selectedSpacing:Float = 340;
+	var dinoNameTitle:FlxText;
 	var titleGroup:FlxSpriteGroup;
-	var selectedHint:FlxText;
 	var showingSelectedScreen:Bool = false;
 	var isClosing:Bool = false;
 
@@ -61,31 +63,25 @@ class DinoSelection extends FlxUISubState {
 		selectionCamera.bgColor.alpha = 0;
 		FlxG.cameras.add(selectionCamera, false);
 
-		selectedHint = new FlxText(0, FlxG.height - 48, "ENTER: Selected Screen  |  ESC: Close", 16);
-		selectedHint.scrollFactor.set(0, 0);
-		selectedHint.screenCenter(X);
-
 		selectedGroup = new FlxSpriteGroup();
-		selectedGroup.visible = false;
 		selectedGroup.cameras = [selectionCamera];
 
 		selectedBaseY = FlxG.height * 0.55;
 
 		titleGroup = new FlxSpriteGroup();
-		titleGroup.visible = false;
 		titleGroup.cameras = [selectionCamera];
 		makeSelectDinoTitle();
 
 		var centerX = FlxG.width * 0.5;
 		var startX = centerX - selectedSpacing;
-		var dinoPaths = [
-			"assets/images/dumb-dino1",
-			"assets/images/dumb-dino2",
-			"assets/images/dumb-dino3"
-		];
+		dinosaurs = DinosaurProvider.getAll();
+		var maxIndex = dinosaurs.length > 0 ? dinosaurs.length - 1 : 0;
+		var startSelection = Std.int(FlxMath.bound(DinosaurProvider.selectedDino, 0, maxIndex));
+		curSelectedItem = startSelection;
+		acceptedSelectedItem = startSelection;
 
-		for (i in 0...dinoPaths.length) {
-			var item = new DinoSelect(dinoPaths[i]);
+		for (i in 0...dinosaurs.length) {
+			var item = new DinoSelect(dinosaurs[i].bitmap);
 			item.origin.set(item.frameWidth * 0.5, item.frameHeight * 0.5);
 
 			var itemCenterX = startX + (selectedSpacing * i);
@@ -98,8 +94,19 @@ class DinoSelection extends FlxUISubState {
 			selectedGroup.add(item);
 		}
 
+		dinoNameTitle = new FlxText(0, selectedBaseY - 140, "", 48);
+		dinoNameTitle.cameras = [selectionCamera];
+		dinoNameTitle.scrollFactor.set(0, 0);
+		dinoNameTitle.alignment = CENTER;
+		dinoNameTitle.antialiasing = false;
+		dinoNameTitle.pixelPerfectRender = true;
+		dinoNameTitle.borderStyle = OUTLINE;
+		dinoNameTitle.borderColor = FlxColor.BLACK;
+		dinoNameTitle.borderSize = 2;
+		dinoNameTitle.screenCenter(X);
+
 		add(shadowOverlay);
-		add(selectedHint);
+		add(dinoNameTitle);
 		add(selectedGroup);
 		add(titleGroup);
 
@@ -190,42 +197,24 @@ class DinoSelection extends FlxUISubState {
 			return;
 		}
 
+		if (controls.ACCEPT) {
+			DinosaurProvider.selectedDino = curSelectedItem;
+			acceptedSelectedItem = curSelectedItem;
+			applyAcceptedBorderState();
+		}
+
 		if (isClosing) {
 			super.update(elapsed);
 			return;
 		}
 
-		if (showingSelectedScreen) {
-			if (controls.LEFT_UI) {
-				changeSelectedItem(-1);
-			} else if (controls.RIGHT_UI) {
-				changeSelectedItem(1);
-			}
-
-			if (controls.ACCEPT) {
-				hideSelectedScreen();
-			}
-		} else {
-			if (controls.ACCEPT) {
-				showSelectedScreen();
-			}
+		if (controls.LEFT_UI) {
+			changeSelectedItem(-1);
+		} else if (controls.RIGHT_UI) {
+			changeSelectedItem(1);
 		}
 
 		super.update(elapsed);
-	}
-
-	function showSelectedScreen():Void {
-		showingSelectedScreen = true;
-		selectedGroup.visible = true;
-		titleGroup.visible = true;
-		selectedHint.visible = false;
-	}
-
-	function hideSelectedScreen():Void {
-		showingSelectedScreen = false;
-		selectedGroup.visible = false;
-		titleGroup.visible = false;
-		selectedHint.visible = true;
 	}
 
 	function startCloseTransition():Void {
@@ -256,12 +245,30 @@ class DinoSelection extends FlxUISubState {
 			var isCurrent = i == curSelectedItem;
 			var targetScale = isCurrent ? 8.1 : 6.0;
 			var targetAlpha = isCurrent ? 1.0 : 0.55;
-			selectedItems[i].color = isCurrent ? FlxColor.WHITE : FlxColor.fromRGB(170, 170, 170);
 			tweenItemScale(i, targetScale, instant);
 			tweenItemAlpha(i, targetAlpha, instant);
 		}
 
+		applyAcceptedBorderState();
+		refreshDinoNameTitle();
 		layoutSelectedItems(instant);
+	}
+
+	function refreshDinoNameTitle():Void {
+		if (dinoNameTitle == null) {
+			return;
+		}
+
+		var label = (curSelectedItem >= 0 && curSelectedItem < dinosaurs.length) ? dinosaurs[curSelectedItem].name : "Unknown Dino";
+		dinoNameTitle.text = label;
+		dinoNameTitle.screenCenter(X);
+	}
+
+	function applyAcceptedBorderState():Void {
+		for (i in 0...selectedItems.length) {
+			var borderColor = i == acceptedSelectedItem ? FlxColor.LIME : FlxColor.WHITE;
+			selectedItems[i].setBorderColor(borderColor);
+		}
 	}
 
 	function layoutSelectedItems(instant:Bool):Void {
@@ -351,8 +358,8 @@ class DinoSelection extends FlxUISubState {
 
 		shadowOverlay = FlxDestroyUtil.destroy(shadowOverlay);
 		selectedGroup = FlxDestroyUtil.destroy(selectedGroup);
+		dinoNameTitle = FlxDestroyUtil.destroy(dinoNameTitle);
 		titleGroup = FlxDestroyUtil.destroy(titleGroup);
-		selectedHint = FlxDestroyUtil.destroy(selectedHint);
 	}
 
 	@:noCompletion private function set_transition(value:Float):Float {

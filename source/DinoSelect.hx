@@ -1,20 +1,32 @@
 package;
 
 import flixel.FlxSprite;
+import flixel.graphics.FlxGraphic;
 import openfl.display.BitmapData;
 import openfl.utils.Assets as OpenFlAssets;
 import openfl.utils.AssetType;
+import StringTools;
 
 class DinoSelect extends FlxSprite {
 	static var processedSheets:Map<String, BitmapData> = [];
+	static inline var FRAME_WIDTH:Int = 22;
+	static inline var FRAME_HEIGHT:Int = 22;
+	static inline var WHITE_BORDER:Int = 0xFFFFFFFF;
 
-	public function new(imagePath:String, x:Float = 0, y:Float = 0) {
+	var sourceGraphic:FlxGraphic;
+	var borderColor:Int = WHITE_BORDER;
+
+	public function new(bitmap:FlxGraphic, x:Float = 0, y:Float = 0) {
 		super(x, y);
+		sourceGraphic = bitmap;
 
-		// Use a clone so each sprite has independent bitmap lifetime.
-		loadGraphic(getProcessedSheet(imagePath).clone(), true, 22, 22);
-		animation.add("idle", [0], 0, true);
-		animation.add("walk", [1, 2], 2, true);
+		applyProcessedSheet();
+		if (animation.getByName("idle") == null) {
+			animation.add("idle", [0], 0, true);
+		}
+		if (animation.getByName("walk") == null) {
+			animation.add("walk", [1, 2], 2, true);
+		}
 		animation.play("walk");
 
 		scrollFactor.set(0, 0);
@@ -22,16 +34,35 @@ class DinoSelect extends FlxSprite {
 		pixelPerfectRender = true;
 	}
 
-	static function getProcessedSheet(imagePath:String):BitmapData {
-		if (processedSheets.exists(imagePath)) {
-			var cached = processedSheets.get(imagePath);
+	public function setBorderColor(color:Int):Void {
+		if (borderColor == color) {
+			return;
+		}
+
+		borderColor = color;
+		applyProcessedSheet();
+		if (animation.getByName("walk") != null) {
+			animation.play("walk");
+		}
+	}
+
+	function applyProcessedSheet():Void {
+		// Use a clone so each sprite has independent bitmap lifetime.
+		loadGraphic(getProcessedSheet(sourceGraphic, borderColor).clone(), true, FRAME_WIDTH, FRAME_HEIGHT);
+	}
+
+	static function getProcessedSheet(bitmap:FlxGraphic, borderColor:Int):BitmapData {
+		var key = bitmap != null && bitmap.key != null ? bitmap.key : "dino_default";
+		key += "|" + StringTools.hex(borderColor, 8);
+		if (processedSheets.exists(key)) {
+			var cached = processedSheets.get(key);
 			if (cached != null && cached.width > 0 && cached.height > 0) {
 				return cached;
 			}
-			processedSheets.remove(imagePath);
+			processedSheets.remove(key);
 		}
 
-		var source = getSourceBitmap(imagePath);
+		var source = getSourceBitmap(bitmap);
 		var srcFrameW = 16;
 		var srcFrameH = 16;
 		var dstFrameW = 22;
@@ -40,7 +71,7 @@ class DinoSelect extends FlxSprite {
 		var borderPadY = 3;
 
 		var darkBg = 0xFF181818;
-		var border = 0xFFFFFFFF;
+		var border = borderColor;
 
 		var frameCols = Std.int(source.width / srcFrameW);
 		var frameRows = Std.int(source.height / srcFrameH);
@@ -86,25 +117,25 @@ class DinoSelect extends FlxSprite {
 			}
 		}
 
-		processedSheets.set(imagePath, output);
+		processedSheets.set(key, output);
 		return output;
 	}
 
-	static function getSourceBitmap(imagePath:String):BitmapData {
+	static function getSourceBitmap(bitmap:FlxGraphic):BitmapData {
+		if (bitmap != null) {
+			bitmap.persist = true;
+			bitmap.destroyOnNoUse = false;
+			if (bitmap.bitmap != null) {
+				return bitmap.bitmap;
+			}
+		}
+
+		var imagePath = bitmap != null && bitmap.key != null ? bitmap.key : "assets/images/dumb-dino1";
 		var openflPath = imagePath + ".png";
 		if (OpenFlAssets.exists(openflPath, AssetType.IMAGE)) {
 			var assetBitmap = OpenFlAssets.getBitmapData(openflPath, false);
 			if (assetBitmap != null) {
 				return assetBitmap;
-			}
-		}
-
-		var graphic = AssetPath.image(imagePath);
-		if (graphic != null) {
-			graphic.persist = true;
-			graphic.destroyOnNoUse = false;
-			if (graphic.bitmap != null) {
-				return graphic.bitmap;
 			}
 		}
 

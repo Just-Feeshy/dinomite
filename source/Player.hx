@@ -15,7 +15,12 @@ class Player extends FlxSprite {
     public function new(x:Float = 0, y:Float = 0) {
         super(x, y);
 
-        loadGraphic(AssetPath.image("assets/images/dumb-dino2"), true, 16, 16);
+        var dinos = DinosaurProvider.getAll();
+        var maxIndex = dinos.length > 0 ? dinos.length - 1 : 0;
+        var selected = Std.int(flixel.math.FlxMath.bound(DinosaurProvider.selectedDino, 0, maxIndex));
+        var dino = dinos[selected];
+
+        loadGraphic(dino.bitmap, true, 16, 16);
         animation.add("idle", [0], 0, true);
         animation.add("walk", [1, 2], 2, true);
         animation.play("walk");
