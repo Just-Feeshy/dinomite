@@ -15,19 +15,15 @@ class DinoSelect extends FlxSprite {
 
 	var sourceGraphic:FlxGraphic;
 	var borderColor:Int = WHITE_BORDER;
+	var selectedIdle:Bool = false;
 
 	public function new(bitmap:FlxGraphic, x:Float = 0, y:Float = 0) {
 		super(x, y);
 		sourceGraphic = bitmap;
 
 		applyProcessedSheet();
-		if (animation.getByName("idle") == null) {
-			animation.add("idle", [0], 0, true);
-		}
-		if (animation.getByName("walk") == null) {
-			animation.add("walk", [1, 2], 2, true);
-		}
-		animation.play("walk");
+		selectedIdle = false;
+		refreshAnimationState();
 
 		scrollFactor.set(0, 0);
 		antialiasing = false;
@@ -41,14 +37,43 @@ class DinoSelect extends FlxSprite {
 
 		borderColor = color;
 		applyProcessedSheet();
-		if (animation.getByName("walk") != null) {
-			animation.play("walk");
-		}
+		refreshAnimationState();
 	}
 
 	function applyProcessedSheet():Void {
 		// Use a clone so each sprite has independent bitmap lifetime.
 		loadGraphic(getProcessedSheet(sourceGraphic, borderColor).clone(), true, FRAME_WIDTH, FRAME_HEIGHT);
+		ensureAnimations();
+	}
+
+	function ensureAnimations():Void {
+		if (animation.getByName("idle") == null) {
+			animation.add("idle", [0], 0, true);
+		}
+		if (animation.getByName("walk") == null) {
+			animation.add("walk", [1, 2], 2, true);
+		}
+	}
+
+	public function setSelectedIdle(value:Bool):Void {
+		if (selectedIdle == value) {
+			return;
+		}
+
+		selectedIdle = value;
+		refreshAnimationState();
+	}
+
+	function refreshAnimationState():Void {
+		if (selectedIdle) {
+			if (animation.getByName("idle") != null) {
+				animation.play("idle");
+			}
+		} else {
+			if (animation.getByName("walk") != null) {
+				animation.play("walk");
+			}
+		}
 	}
 
 	static function getProcessedSheet(bitmap:FlxGraphic, borderColor:Int):BitmapData {

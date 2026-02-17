@@ -26,7 +26,6 @@ class DinoSelection extends FlxUISubState {
 	var selectedGroup:FlxSpriteGroup;
 	var selectedItems:Array<DinoSelect> = [];
 	var selectedItemCenters:Array<{x:Float, y:Float}> = [];
-	var dinosaurs:Array<Dinosaur> = [];
 	var curSelectedItem:Int = 0;
 	var acceptedSelectedItem:Int = -1;
 	var selectedBaseY:Float = 0;
@@ -74,7 +73,7 @@ class DinoSelection extends FlxUISubState {
 
 		var centerX = FlxG.width * 0.5;
 		var startX = centerX - selectedSpacing;
-		dinosaurs = DinosaurProvider.getAll();
+		var dinosaurs = DinosaurProvider.getAll();
 		var maxIndex = dinosaurs.length > 0 ? dinosaurs.length - 1 : 0;
 		var startSelection = Std.int(FlxMath.bound(DinosaurProvider.selectedDino, 0, maxIndex));
 		curSelectedItem = startSelection;
@@ -94,7 +93,7 @@ class DinoSelection extends FlxUISubState {
 			selectedGroup.add(item);
 		}
 
-		dinoNameTitle = new FlxText(0, selectedBaseY - 140, "", 48);
+		dinoNameTitle = new FlxText(0, selectedBaseY - 172, "", 32);
 		dinoNameTitle.cameras = [selectionCamera];
 		dinoNameTitle.scrollFactor.set(0, 0);
 		dinoNameTitle.alignment = CENTER;
@@ -259,6 +258,7 @@ class DinoSelection extends FlxUISubState {
 			return;
 		}
 
+		var dinosaurs = DinosaurProvider.getAll();
 		var label = (curSelectedItem >= 0 && curSelectedItem < dinosaurs.length) ? dinosaurs[curSelectedItem].name : "Unknown Dino";
 		dinoNameTitle.text = label;
 		dinoNameTitle.screenCenter(X);
@@ -266,8 +266,10 @@ class DinoSelection extends FlxUISubState {
 
 	function applyAcceptedBorderState():Void {
 		for (i in 0...selectedItems.length) {
-			var borderColor = i == acceptedSelectedItem ? FlxColor.LIME : FlxColor.WHITE;
+			var isAccepted = i == acceptedSelectedItem;
+			var borderColor = isAccepted ? FlxColor.LIME : FlxColor.WHITE;
 			selectedItems[i].setBorderColor(borderColor);
+			selectedItems[i].setSelectedIdle(isAccepted);
 		}
 	}
 
