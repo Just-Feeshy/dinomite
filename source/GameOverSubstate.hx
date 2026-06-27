@@ -10,7 +10,7 @@ class GameOverSubstate extends FlxUISubState {
     var background:FlxSprite;
     var gameOverText:FlxText;
 
-    @:final var controls:Controls = new Controls('player1', Solo);
+    final controls:Controls = new Controls('player1', Solo);
 
     public function new() {
         super();

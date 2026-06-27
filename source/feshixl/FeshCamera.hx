@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxCamera;
 import flixel.system.FlxAssets.FlxShader;
 import flixel.graphics.frames.FlxFrame;
+import flixel.graphics.tile.FlxDrawTrianglesItem;
 import flixel.util.FlxDestroyUtil;
 import flixel.math.FlxPoint;
 import flixel.math.FlxMatrix;
@@ -31,14 +32,14 @@ class FeshCamera extends FlxCamera {
     public var engineAlpha(default, set):Float = 1;
 
     public function new() {
-        _filters = [];
+        super();
+
+        filters = [];
 
         lockedFilters = [];
         wastefulFilters = [];
 
         filtersEnabled = false;
-
-        super();
     }
 
     public function setTrashFilters(trashFilters:Array<BitmapFilter>) {
@@ -52,13 +53,18 @@ class FeshCamera extends FlxCamera {
     public function eraseFilters() {
         lockedFilters = [];
         wastefulFilters = [];
-        setFilters([]);
+        filters = [];
     }
 
     function getFilters():Array<BitmapFilter> {
         var daFilters:Array<BitmapFilter> = [];
 
-        daFilters = _filters.concat(lockedFilters);
+        if(filters != null) {
+            daFilters = filters.concat(lockedFilters);
+        }else {
+            daFilters = lockedFilters.copy();
+        }
+
         daFilters = daFilters.concat(wastefulFilters);
 
         return daFilters;
@@ -89,17 +95,17 @@ class FeshCamera extends FlxCamera {
             }
             else
             {
-                _helperMatrix.translate(-viewOffsetX, -viewOffsetY);
+                _helperMatrix.translate(-viewMarginLeft, -viewMarginTop);
                 buffer.draw(pixels, _helperMatrix, null, blend, null, (smoothing || antialiasing));
             }
         }
         else
         {
-            var isColored = (transform != null && transform.hasRGBMultipliers());
+            var isColored = (transform != null #if !html5 && transform.hasRGBMultipliers() #end);
             var hasColorOffsets:Bool = (transform != null && transform.hasRGBAOffsets());
 
             #if FLX_RENDER_TRIANGLE
-            var drawItem:FlxDrawTrianglesItem = startTrianglesBatch(frame.parent, smoothing, isColored, blend);
+            var drawItem:FlxDrawTrianglesItem = startTrianglesBatch(frame.parent, smoothing, isColored, blend, hasColorOffsets, shader);
             #else
             var drawItem = startQuadBatch(frame.parent, isColored, hasColorOffsets, blend, smoothing, shader);
             #end
@@ -124,8 +130,8 @@ class FeshCamera extends FlxCamera {
                 }
                 else
                 {
-                    _helperPoint.x = destPoint.x - Std.int(viewOffsetX);
-                    _helperPoint.y = destPoint.y - Std.int(viewOffsetY);
+                    _helperPoint.x = destPoint.x - Std.int(viewMarginLeft);
+                    _helperPoint.y = destPoint.y - Std.int(viewMarginTop);
                     buffer.copyPixels(pixels, sourceRect, _helperPoint, null, null, true);
                 }
             }
@@ -146,7 +152,7 @@ class FeshCamera extends FlxCamera {
             #if !FLX_RENDER_TRIANGLE
             var drawItem = startQuadBatch(frame.parent, isColored, hasColorOffsets, blend, smoothing, shader);
             #else
-            var drawItem:FlxDrawTrianglesItem = startTrianglesBatch(frame.parent, smoothing, isColored, blend);
+            var drawItem:FlxDrawTrianglesItem = startTrianglesBatch(frame.parent, smoothing, isColored, blend, hasColorOffsets, shader);
             #end
             drawItem.addQuad(frame, _helperMatrix, transform);
         }

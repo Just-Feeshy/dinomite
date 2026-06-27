@@ -36,9 +36,9 @@
 
 	<!-- _______________________________ Libraries ______________________________ -->
 
-	<haxelib name="flixel" version="4.11.0" />
-	<haxelib name="flixel-addons" version="2.11.0" />
-	<haxelib name="flixel-ui" version="2.5.0" />
+	<haxelib name="flixel" version="6.1.2" />
+	<haxelib name="flixel-addons" version="4.0.1" />
+	<haxelib name="flixel-ui" version="2.6.4" />
 
 	<assets path="assets/music" exclude="*.ogg" if="web"/>
 	<assets path="assets/music" exclude="*.mp3" unless="web"/>

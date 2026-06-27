@@ -37,7 +37,7 @@ class PlayState extends BetterUIStates {
 
 	private var stopGame(default, set):Bool = false;
 
-	@:final private var playerCamOffset:Int = 128;
+	private final playerCamOffset:Int = 128;
 
 	public static var GAME_FADE = "tile";
 

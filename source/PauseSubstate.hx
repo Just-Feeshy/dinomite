@@ -22,7 +22,7 @@ class PauseSubstate extends FlxUISubState {
 
     var selected:Bool = false;
 
-    @:final var controls:Controls = new Controls('player1', Solo);
+    final controls:Controls = new Controls('player1', Solo);
 
     public function new() {
         super();
@@ -88,7 +88,7 @@ class PauseSubstate extends FlxUISubState {
                         FlxG.resetState();
                     case 2:
                         PlayState.score = 0;
-                        FlxG.switchState(new TitleState());
+                        FlxG.switchState(TitleState.new);
                     case 3:
                         #if sys
                         Sys.exit(0);

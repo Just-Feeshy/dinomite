@@ -10,7 +10,7 @@ class Player extends FlxSprite {
 
     public var isTouchingGround:Bool = false;
 
-    @:final var clipRight:Float = 0.2;
+    final clipRight:Float = 0.2;
 
     public function new(x:Float = 0, y:Float = 0) {
         super(x, y);

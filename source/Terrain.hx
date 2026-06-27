@@ -9,7 +9,7 @@ import flixel.group.FlxSpriteGroup;
 class Terrain extends FlxSpriteGroup {
 	private static var BLOCK_SIZE:Int = 64;
 
-    @:final public var maxiumHeight:Float = Std.int(FlxG.height * 0.5) + 64;
+    public final maxiumHeight:Float = Std.int(FlxG.height * 0.5) + 64;
 
     public var collisionMembers(default, null):Array<FlxSprite> = [];
 	public var groundMembers(default, null):Array<FlxSprite> = [];
@@ -36,8 +36,8 @@ class Terrain extends FlxSpriteGroup {
 
     public var cactusGenMin:UInt = 6;
 
-    @:final public var startingVelocity:Float = 500;
-    @:final public var startingAcceleration:Float = 20;
+    public final startingVelocity:Float = 500;
+    public final startingAcceleration:Float = 20;
 
     public var backwardsVelocity(default, null):FlxPoint;
 
@@ -227,10 +227,10 @@ class Terrain extends FlxSpriteGroup {
 		var pyBottom = p.y + p.height;
 
 		for(cactus in cactis) {
-			var cxLeft = cactus.x;
-			var cxRight = cactus.x + cactus.width;
+			var cxLeft = cactus.x + 1;
+			var cxRight = cactus.x + cactus.width - 1;
 			var cyTop = cactus.y;
-			var cyBottom = cactus.y + cactus.height;
+			var cyBottom = cactus.y + cactus.height - 1;
 			if(pxRight > cxLeft && pxLeft < cxRight && pyBottom > cyTop && pyTop < cyBottom) {
 				return true;
 			}

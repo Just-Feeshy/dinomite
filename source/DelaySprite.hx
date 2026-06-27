@@ -17,6 +17,7 @@ class DelaySprite extends FlxSprite {
         super(X, Y, SimpleGraphic);
 
         readyPlayAnim = [];
+        animation.onFinish.add(handleFinishedAnimation);
     }
 
     public function playAnim(Anim:String, Timer:Float) {
@@ -33,11 +34,16 @@ class DelaySprite extends FlxSprite {
 
             if(delayedAnim.timer <= 0) {
                 animation.play(delayedAnim.animation);
-                animation.finishCallback = onFinishedAnimation;
                 readyPlayAnim.remove(delayedAnim);
             }else {
                 delayedAnim.timer -= elapsed;
             }
+        }
+    }
+
+    function handleFinishedAnimation(name:String):Void {
+        if(onFinishedAnimation != null) {
+            onFinishedAnimation(name);
         }
     }
 }

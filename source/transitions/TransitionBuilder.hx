@@ -5,8 +5,7 @@ import flixel.FlxSubState;
 import flixel.util.FlxDestroyUtil;
 import flixel.FlxCamera;
 
-@:enum
-abstract TransitionFade(String) {
+enum abstract TransitionFade(String) {
     var IN = "in";
     var OUT = "out";
 }

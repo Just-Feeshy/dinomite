@@ -1,7 +1,5 @@
 package;
 
-import flixel.FlxG;
-import flixel.FlxState;
 import flixel.addons.ui.FlxUIState;
 
 import transitions.TransitionSamples;
@@ -37,11 +35,17 @@ class BetterUIStates extends FlxUIState {
 		super();
     }
 
-    /**
+	/**
 	* Based off of `FlxTransitionableState` class from HaxeFlixel.
 	*/
 	function createTransition(transType:String, fade:TransitionFade):TransitionBuilder {
-		return Type.createInstance(transitionBuilds.get(transType), [0.5, fade]);
+		var transitionClass = transitionBuilds.get(transType);
+
+		if(transitionClass == null) {
+			return null;
+		}
+
+		return Type.createInstance(transitionClass, [0.5, fade]);
 	}
 
 	function finishedTransition() {
@@ -60,33 +64,34 @@ class BetterUIStates extends FlxUIState {
 		}
 	}
 
-	@:noCompletion public function transitionOut(state:FlxState):Void {
-		if(transOutType != null && transOutType != "none") {
+	@:noCompletion public function transitionOut(onOutroComplete:() -> Void):Void {
+		if(transOutType != null && transOutType != "none" && transOutType.length > 0) {
 			var _transition = createTransition(transOutType, OUT);
 
 			if(_transition == null) {
 				transOutFinished = true;
+				onOutroComplete();
 				return;
 			}
 
 			_transition.finishCallback = function() {
 				finishedTransition();
-				FlxG.switchState(state);
+				onOutroComplete();
 			};
 
 			openSubState(_transition);
+		}else {
+			transOutFinished = true;
+			onOutroComplete();
 		}
 	}
 
-	override function switchTo(state:FlxState):Bool {
-		if(transOutType.length == 0) {
-			return true;
+	override function startOutro(onOutroComplete:() -> Void):Void {
+		if(transOutType.length == 0 || transOutType == "none" || transOutFinished) {
+			onOutroComplete();
+			return;
 		}
 
-		if(!transOutFinished) {
-			transitionOut(state);
-		}
-
-		return transOutFinished;
+		transitionOut(onOutroComplete);
 	}
 }

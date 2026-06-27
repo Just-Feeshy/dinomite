@@ -257,7 +257,7 @@ class TitleState extends BetterUIStates {
 
                 switch(curSelected) {
                     case 0:
-                        FlxG.switchState(new PlayState());
+                        FlxG.switchState(PlayState.new);
 					case 1:
                         selected = true;
                         creditsText.visible = false;

@@ -41,6 +41,7 @@ haxelib --global run hmm setup
 ```bash
 hmm install
 ```
+This installs the versions pinned in `hmm.json` into a project-local `.haxelib` repo.
 
 4. Build and run:
 ```bash

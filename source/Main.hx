@@ -37,7 +37,7 @@ class Main extends Sprite
 	}
 
 	private function setupGame():Void {
-		game = new FlxGame(0, 0, TitleState, zoom, fps, fps, true, fullscreen);
+		game = new FlxGame(0, 0, TitleState.new, fps, fps, true, fullscreen);
 		addChild(game);
 
 		Lib.current.addChild(new Version());
