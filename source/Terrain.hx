@@ -8,6 +8,7 @@ import flixel.group.FlxSpriteGroup;
 
 class Terrain extends FlxSpriteGroup {
 	private static var BLOCK_SIZE:Int = 64;
+	private static inline var FIRST_PLATFORM_GAP_DISTANCE:UInt = 1;
 
     public final maxiumHeight:Float = Std.int(FlxG.height * 0.5) + 64;
 
@@ -30,6 +31,7 @@ class Terrain extends FlxSpriteGroup {
 
     var genLayersIndex:UInt = 0;
     var genLayersMax:UInt = 0;
+    var completedPlatforms:UInt = 0;
 
     var genSide:Bool = false;
     var generatedC:Bool = false;
@@ -58,9 +60,11 @@ class Terrain extends FlxSpriteGroup {
 
     public function generateSide(x:Float = 0):Void {
         if(genLayersIndex >= genLayersMax) {
+            completedPlatforms++;
+
             genHeight = Math.ceil((FlxG.height * 0.5) * 0.015625) + FlxG.random.int(-5, -1);
             genLayersMax = FlxG.random.int(5, 10);
-            genDistance = FlxG.random.int(1, 3) * 2;
+            genDistance = completedPlatforms == 1 ? FIRST_PLATFORM_GAP_DISTANCE : FlxG.random.int(1, 3) * 2;
             genLayersIndex = 0;
             generatedC = false;
             genSide = false;
