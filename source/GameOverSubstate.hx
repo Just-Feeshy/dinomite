@@ -48,6 +48,11 @@ class GameOverSubstate extends FlxUISubState {
             close();
         }
 
+		if(controls.BACK) {
+			PlayState.score = 0;
+			FlxG.switchState(TitleState.new);
+		}
+
         super.update(elapsed);
     }
 }
