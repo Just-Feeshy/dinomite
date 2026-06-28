@@ -30,6 +30,12 @@ class PlayState extends BetterUIStates {
 	private var jumpForce:Float = 0;
 
 	private var addJumpForce:Bool = false;
+	private static inline var TINY_JUMP_FORCE:Float = -565;
+	private static inline var TINY_JUMP_START_OFFSET:Float = 8;
+	private static inline var TINY_JUMP_HEIGHT:Float = 96;
+	private var tinyJumpSpinning:Bool = false;
+	private var tinyJumpGroundY:Float = 0;
+	private var tinyJumpLastY:Float = 0;
 
 	private var wallCollided:Bool = false;
 
@@ -135,6 +141,18 @@ class PlayState extends BetterUIStates {
 				jumpForce = 0;
 			}
 
+			if(controls.RIGHT_P && player.isTouchingGround) {
+				tinyJumpGroundY = player.y;
+				player.y -= TINY_JUMP_START_OFFSET;
+				player.isTouchingGround = false;
+				player.jumpForce = TINY_JUMP_FORCE;
+				addJumpForce = false;
+				jumpForce = 0;
+				tinyJumpSpinning = true;
+				tinyJumpLastY = player.y;
+				player.angle = 0;
+			}
+
 			if(controls.PAUSE) {
 				pause();
 			}
@@ -143,7 +161,7 @@ class PlayState extends BetterUIStates {
 				terrain.cactusGenMin = 1;
 			}
 
-			if(terrain.cactusCollision(player)) {
+			if(terrain.cactusCollision(player, tinyJumpSpinning && !player.isTouchingGround)) {
 				truelyDed();
 			}
 
@@ -158,6 +176,34 @@ class PlayState extends BetterUIStates {
 		}
 
 		super.update(elapsed);
+		updateTinyJumpSpin();
+	}
+
+	function updateTinyJumpSpin():Void {
+		if(!tinyJumpSpinning) {
+			if(player.isTouchingGround && player.angle != 0) {
+				player.angle = 0;
+			}
+			return;
+		}
+
+		if(player.isTouchingGround) {
+			player.angle = 0;
+			tinyJumpSpinning = false;
+			return;
+		}
+
+		var heightProgress = (tinyJumpGroundY - player.y) / TINY_JUMP_HEIGHT;
+		if(heightProgress < 0) {
+			heightProgress = 0;
+		}else if(heightProgress > 1) {
+			heightProgress = 1;
+		}
+
+		var rising = player.y <= tinyJumpLastY;
+		var spinProgress = rising ? heightProgress * 0.5 : 1 - (heightProgress * 0.5);
+		player.angle = spinProgress * 360;
+		tinyJumpLastY = player.y;
 	}
 
 	function pause():Void {
@@ -210,6 +256,8 @@ class PlayState extends BetterUIStates {
 		}
 
 		player.jumpForce = 0;
+		player.angle = 0;
+		tinyJumpSpinning = false;
 		return stopGame = value;
 	}
 

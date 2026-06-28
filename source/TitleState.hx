@@ -223,6 +223,7 @@ class TitleState extends BetterUIStates {
         if(FlxG.save.data.customKeys == null) {
             FlxG.save.data.customKeys = {
                 UP: FlxKey.W,
+                RIGHT: FlxKey.D,
                 DOWN: FlxKey.S,
                 UP_UI: FlxKey.W,
                 DOWN_UI: FlxKey.S,
@@ -231,6 +232,7 @@ class TitleState extends BetterUIStates {
                 PAUSE: FlxKey.ENTER,
             };
         } else {
+            if(FlxG.save.data.customKeys.RIGHT == null) FlxG.save.data.customKeys.RIGHT = FlxKey.D;
             if(FlxG.save.data.customKeys.UP_UI == null) FlxG.save.data.customKeys.UP_UI = FlxKey.W;
             if(FlxG.save.data.customKeys.DOWN_UI == null) FlxG.save.data.customKeys.DOWN_UI = FlxKey.S;
             if(FlxG.save.data.customKeys.LEFT_UI == null) FlxG.save.data.customKeys.LEFT_UI = FlxKey.A;

@@ -224,17 +224,20 @@ class Terrain extends FlxSpriteGroup {
 		return {gravity: gravity, ground: p.isTouchingGround};
 	}
 
-	public function cactusCollision(p:Player):Bool {
+	public function cactusCollision(p:Player, shrinkCactusHitbox:Bool = false):Bool {
 		var pxLeft = p.x;
 		var pxRight = p.x + p.width;
 		var pyTop = p.y;
 		var pyBottom = p.y + p.height;
+		var cactusScale = shrinkCactusHitbox ? 0.75 : 1;
 
 		for(cactus in cactis) {
-			var cxLeft = cactus.x + 1;
-			var cxRight = cactus.x + cactus.width - 1;
-			var cyTop = cactus.y;
-			var cyBottom = cactus.y + cactus.height - 1;
+			var insetX = cactus.width * (1 - cactusScale) * 0.5;
+			var insetY = cactus.height * (1 - cactusScale) * 0.5;
+			var cxLeft = cactus.x + 2 + insetX;
+			var cxRight = cactus.x + cactus.width - 2 - insetX;
+			var cyTop = cactus.y + insetY;
+			var cyBottom = cactus.y + cactus.height - 1 - insetY;
 			if(pxRight > cxLeft && pxLeft < cxRight && pyBottom > cyTop && pyTop < cyBottom) {
 				return true;
 			}

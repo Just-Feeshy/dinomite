@@ -31,7 +31,12 @@ class OptionGroup extends FlxTypedSpriteGroup<FlxText> {
     public function new() {
         super();
 
-        createSection("Player Settings", ['Jump: ${FlxKey.toStringMap.get(FlxG.save.data.customKeys.UP)}', 'Go Down: ${FlxKey.toStringMap.get(FlxG.save.data.customKeys.DOWN)}', 'Pause: ${FlxKey.toStringMap.get(FlxG.save.data.customKeys.PAUSE)}']);
+        createSection("Player Settings", [
+            'Jump: ${FlxKey.toStringMap.get(FlxG.save.data.customKeys.UP)}',
+            'Front Flip: ${FlxKey.toStringMap.get(FlxG.save.data.customKeys.RIGHT)}',
+            'Go Down: ${FlxKey.toStringMap.get(FlxG.save.data.customKeys.DOWN)}',
+            'Pause: ${FlxKey.toStringMap.get(FlxG.save.data.customKeys.PAUSE)}'
+        ]);
         createSection("UI Settings", [
             'UI Up: ${FlxKey.toStringMap.get(FlxG.save.data.customKeys.UP_UI)}',
             'UI Down: ${FlxKey.toStringMap.get(FlxG.save.data.customKeys.DOWN_UI)}',
@@ -89,16 +94,18 @@ class OptionGroup extends FlxTypedSpriteGroup<FlxText> {
                         case 0:
                             FlxG.save.data.customKeys.UP = keyPressed;
                         case 1:
-                            FlxG.save.data.customKeys.DOWN = keyPressed;
+                            FlxG.save.data.customKeys.RIGHT = keyPressed;
                         case 2:
-                            FlxG.save.data.customKeys.PAUSE = keyPressed;
+                            FlxG.save.data.customKeys.DOWN = keyPressed;
                         case 3:
-                            FlxG.save.data.customKeys.UP_UI = keyPressed;
+                            FlxG.save.data.customKeys.PAUSE = keyPressed;
                         case 4:
-                            FlxG.save.data.customKeys.DOWN_UI = keyPressed;
+                            FlxG.save.data.customKeys.UP_UI = keyPressed;
                         case 5:
-                            FlxG.save.data.customKeys.LEFT_UI = keyPressed;
+                            FlxG.save.data.customKeys.DOWN_UI = keyPressed;
                         case 6:
+                            FlxG.save.data.customKeys.LEFT_UI = keyPressed;
+                        case 7:
                             FlxG.save.data.customKeys.RIGHT_UI = keyPressed;
                     }
 

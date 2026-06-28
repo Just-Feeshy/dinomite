@@ -558,6 +558,7 @@ class Controls extends FlxActionSet
 		{
 			case Solo:
 				var moveUpKey:FlxKey = FlxG.save.data.customKeys.UP;
+				var tinyJumpKey:FlxKey = FlxG.save.data.customKeys.RIGHT != null ? FlxG.save.data.customKeys.RIGHT : FlxKey.D;
 				var moveDownKey:FlxKey = FlxG.save.data.customKeys.DOWN;
 				var pauseKey:FlxKey = FlxG.save.data.customKeys.PAUSE;
 				var uiUpKey:FlxKey = FlxG.save.data.customKeys.UP_UI != null ? FlxG.save.data.customKeys.UP_UI : FlxKey.W;
@@ -568,7 +569,7 @@ class Controls extends FlxActionSet
 				inline bindKeys(Control.UP, [moveUpKey, FlxKey.UP]);
 				inline bindKeys(Control.DOWN, [moveDownKey, FlxKey.DOWN]);
 				inline bindKeys(Control.LEFT, [FlxKey.LEFT, FlxKey.A]);
-				inline bindKeys(Control.RIGHT, [FlxKey.RIGHT, FlxKey.D]);
+				inline bindKeys(Control.RIGHT, [tinyJumpKey, FlxKey.RIGHT]);
 				inline bindKeys(Control.UP_UI, [uiUpKey, FlxKey.UP]);
 				inline bindKeys(Control.DOWN_UI, [uiDownKey, FlxKey.DOWN]);
 				inline bindKeys(Control.LEFT_UI, [uiLeftKey, FlxKey.LEFT]);
