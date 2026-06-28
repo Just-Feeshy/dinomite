@@ -117,8 +117,6 @@ class Terrain extends FlxSpriteGroup {
             return;
         }
 
-        blocks.sort((a, b) -> Std.int(a.x - b.x));
-
         while(blocks.length > 0 && Std.int(blocks[0].x) <= x) {
             if(destroy) {
                 blocks[0].destroy();
@@ -126,6 +124,19 @@ class Terrain extends FlxSpriteGroup {
             }else {
                 blocks.shift();
             }
+        }
+    }
+
+    function clearMembersBeforeX(x:Float):Void {
+        var index = members.length - 1;
+        while(index >= 0) {
+            var block = members[index];
+            if(block != null && Std.int(block.x) <= x) {
+                block.destroy();
+                remove(block, true);
+            }
+
+            index--;
         }
     }
 
@@ -149,6 +160,7 @@ class Terrain extends FlxSpriteGroup {
     public function clean(player:Player):Void {
         clearBlocksBeforeX(collisionMembers, player.x - BLOCK_SIZE);
         clearBlocksBeforeX(cactis, player.x - BLOCK_SIZE);
+        clearBlocksBeforeX(floorMembers, player.x - BLOCK_SIZE);
 	}
 
 	public function wallCollision(p:Player, elapsed:Float):Bool {
@@ -267,7 +279,7 @@ class Terrain extends FlxSpriteGroup {
             return;
         }
 
-        clearBlocksBeforeX(members, -(FlxG.width * 0.5) - 64, true);
+        clearMembersBeforeX(-(FlxG.width * 0.5) - 64);
     }
 
     override public function update(elapsed:Float):Void {

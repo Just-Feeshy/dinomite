@@ -28,7 +28,11 @@
 	<!-- _____________________________ Path Settings ____________________________ -->
 
 	<source path="source" />
-	<assets path="assets" />
+	<assets path="assets/data" />
+	<assets path="assets/font" />
+	<assets path="assets/images" />
+	<assets path="assets/shaders" />
+	<assets path="assets/sounds" />
 
 	<set name="BUILD_DIR" value="export/debug" if="debug" />
 	<set name="BUILD_DIR" value="export/release" if="release" />
@@ -40,8 +44,8 @@
 	<haxelib name="flixel-addons" version="4.0.1" />
 	<haxelib name="flixel-ui" version="2.6.4" />
 
-	<assets path="assets/music" exclude="*.ogg" if="web"/>
-	<assets path="assets/music" exclude="*.mp3" unless="web"/>
+	<assets path="assets/music" exclude="*.ogg" if="web" />
+	<assets path="assets/music" exclude="*.mp3" unless="web" />
 
 	<!--In case you want to use nape with flixel-->
 	<!--<haxelib name="nape-haxe4" />-->
